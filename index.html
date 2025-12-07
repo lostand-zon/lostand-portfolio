@@ -19,11 +19,11 @@
       --bg: #0f172a;
       --bg-alt: #1e293b;
       --accent: #a855ff;
-      --accent-soft: rgba(168, 85, 255, 0.25);
+      --accent-soft: rgba(168, 85, 255, 0.35);
       --text: #f9fafb;
       --muted: #9ca3af;
       --muted-strong: #e5e7eb;
-      --border: #1f2937;
+      --border: rgba(148, 163, 184, 0.45);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,7 +33,7 @@
     body {
       font-family: "Pretendard", system-ui, -apple-system, BlinkMacSystemFont,
         "Segoe UI", sans-serif;
-      /* 훨씬 밝은 톤의 네이비 그라데이션 */
+      /* 이전에 쓰던 밝은 배경 그라데이션 */
       background: linear-gradient(
         to bottom,
         #0f172a 0%,
@@ -45,6 +45,8 @@
       color: var(--text);
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
     }
 
     a { color: inherit; text-decoration: none; }
@@ -54,6 +56,52 @@
       max-width: 1040px;
       margin: 0 auto;
       padding: 0 20px;
+    }
+
+    /* 뒤쪽 liquid glass 블롭 */
+    .bg-orbit {
+      position: fixed;
+      border-radius: 999px;
+      filter: blur(40px);
+      opacity: 0.45;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      z-index: -1;
+      transform-origin: center;
+      animation: floatBlob 18s ease-in-out infinite alternate;
+    }
+
+    .bg-orbit-1 {
+      width: 420px;
+      height: 420px;
+      top: -80px;
+      left: -120px;
+      background: radial-gradient(circle at 30% 30%, #38bdf8, transparent 60%);
+    }
+
+    .bg-orbit-2 {
+      width: 420px;
+      height: 420px;
+      bottom: -120px;
+      right: -140px;
+      background: radial-gradient(circle at 70% 40%, #a855ff, transparent 60%);
+      animation-delay: 3s;
+    }
+
+    .bg-orbit-3 {
+      width: 320px;
+      height: 320px;
+      top: 40%;
+      left: 55%;
+      background: radial-gradient(circle at 50% 50%, #22c55e, transparent 65%);
+      opacity: 0.32;
+      animation-delay: 6s;
+    }
+
+    @keyframes floatBlob {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(30px, -20px, 0) scale(1.06); }
+      100% { transform: translate3d(-20px, 26px, 0) scale(1.03); }
     }
 
     /* 공통 섹션 */
@@ -68,17 +116,17 @@
 
     .section-sub {
       font-size: 14px;
-      color: var(--muted-strong); /* 설명 글자 밝게 */
+      color: var(--muted-strong);
       margin-bottom: 24px;
     }
 
-    /* 스크롤 애니메이션 (항상 보이되, 위치만 살짝 올라오게) */
+    /* reveal: 부드러운 등장 애니메이션 */
     .reveal {
-      opacity: 1; /* 절대 0으로 안 두기 – JS 안 돌더라도 항상 보이게 */
-      transform: translateY(32px);
+      opacity: 0;
+      transform: translateY(26px);
       transition:
-        opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
-        transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+        opacity 0.8s cubic-bezier(0.22, 0.61, 0.36, 1),
+        transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
       will-change: opacity, transform;
     }
     .reveal.visible {
@@ -86,7 +134,7 @@
       transform: translateY(0);
     }
 
-    /* HERO */
+    /* HERO – 이름 쪽은 글래스 X */
     .hero {
       min-height: 100vh;
       display: flex;
@@ -96,15 +144,20 @@
       position: relative;
     }
 
-    .hero-inner { padding: 40px 20px; }
+    .hero-inner {
+      padding: 40px 20px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
 
     .hero-name {
+      position: relative;
       font-size: clamp(48px, 11vw, 80px);
       font-weight: 700;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       margin-bottom: 16px;
-      position: relative;
+      text-shadow: 0 0 26px rgba(15, 23, 42, 0.8);
     }
 
     .hero-name::after {
@@ -113,45 +166,87 @@
       left: 50%;
       transform: translateX(-50%);
       bottom: -14px;
-      width: 80px;
+      width: 110px;
       height: 2px;
       border-radius: 999px;
-      background: linear-gradient(to right, #22d3ee, var(--accent));
+      background: linear-gradient(to right, #22d3ee, #a855ff);
+      box-shadow: 0 0 18px rgba(168, 85, 255, 0.7);
     }
 
     .hero-tagline {
       margin-top: 30px;
       font-size: 16px;
       color: var(--muted-strong);
+      position: relative;
+      z-index: 1;
     }
 
-    /* 섹션 공통 배경/구분선 (투명 + 구분선만) */
+    /* 섹션 구분선 */
     .career-section,
     .video-section,
     .tools-section {
       background: transparent;
-      border-top: 1px solid rgba(30, 41, 59, 0.7);
-      border-bottom: 1px solid rgba(30, 41, 59, 0.7);
+      border-top: 1px solid rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.8);
+    }
+
+    /* glass card – 유리 느낌 강하게 */
+    .glass-card {
+      border-radius: 22px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.12),
+        rgba(15, 23, 42, 0.65)
+      );
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      box-shadow:
+        0 24px 60px rgba(15, 23, 42, 0.85),
+        0 0 0 1px rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(24px) saturate(165%);
+      -webkit-backdrop-filter: blur(24px) saturate(165%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(248, 250, 252, 0.25), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.3), transparent 55%);
+      opacity: 0.9;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .glass-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.2);
+      mix-blend-mode: screen;
+      pointer-events: none;
     }
 
     /* 경력 섹션 카드 */
     .career-card {
-      border-radius: 18px;
-      border: 1px solid rgba(148, 163, 184, 0.85);
-      background: radial-gradient(
-        circle at top left,
-        rgba(168, 85, 255, 0.24),
-        rgba(30, 64, 175, 0.75)
-      );
       padding: 24px 22px;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.55);
     }
 
-    .career-list { list-style: none; font-size: 15px; color: var(--text); }
+    .career-list {
+      list-style: none;
+      font-size: 15px;
+      color: var(--text);
+      position: relative;
+      z-index: 1;
+    }
 
     .career-item {
       padding: 10px 0;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.6);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.4);
     }
 
     .career-item:last-child { border-bottom: none; }
@@ -166,24 +261,43 @@
 
     /* 영상 섹션 공통 */
     .video-wrapper {
-      border-radius: 18px;
-      border: 1px solid rgba(148, 163, 184, 0.8);
-      background: radial-gradient(
-        circle at top,
-        rgba(37, 99, 235, 0.3),
-        rgba(15, 23, 42, 0.95)
-      );
       padding: 22px 22px 26px;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.65);
+      margin: 0;
+    }
+
+    .video-wrapper .video-caption {
+      position: relative;
+      z-index: 1;
     }
 
     .video-frame {
       position: relative;
       width: 100%;
       aspect-ratio: 16 / 9;
-      border-radius: 14px;
+      border-radius: 16px;
       overflow: hidden;
-      background: #020617;
+      background: radial-gradient(
+        circle at top left,
+        rgba(248, 250, 252, 0.16),
+        rgba(15, 23, 42, 1)
+      );
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.8);
+      isolation: isolate;
+    }
+
+    .video-frame::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background: radial-gradient(
+        circle at 10% 0%,
+        rgba(248, 250, 252, 0.22),
+        transparent 55%
+      );
+      opacity: 0.55;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      z-index: 1;
     }
 
     .video-frame-vertical {
@@ -197,6 +311,8 @@
       height: 100%;
       border: none;
       display: block;
+      position: relative;
+      z-index: 2;
     }
 
     .video-caption {
@@ -205,7 +321,7 @@
       margin-top: 10px;
     }
 
-    /* 롱폼용 그리드 */
+    /* 롱폼 그리드 */
     .video-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -221,8 +337,9 @@
       height: 56px;
       display: flex;
       align-items: center;
-      z-index: 20;
+      z-index: 30;
       pointer-events: none;
+      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.92), transparent);
     }
 
     .top-bar-inner {
@@ -236,12 +353,19 @@
       font-size: 12px;
       color: var(--muted-strong);
       opacity: 0.95;
+      pointer-events: auto;
     }
 
     .top-left {
       display: flex;
       align-items: center;
       gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.82);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
 
     .top-dot {
@@ -249,15 +373,22 @@
       height: 8px;
       border-radius: 999px;
       background: #22c55e;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
     }
 
     .top-right a {
-      pointer-events: auto;
-      padding: 4px 10px;
+      padding: 6px 14px;
       border-radius: 999px;
       border: 1px solid rgba(148, 163, 184, 0.9);
-      background: rgba(15, 23, 42, 0.9);
+      background: radial-gradient(
+        circle at top left,
+        rgba(248, 250, 252, 0.1),
+        rgba(15, 23, 42, 0.9)
+      );
       font-size: 11px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
     }
 
     /* 사용 가능한 툴 섹션 */
@@ -266,16 +397,8 @@
     }
 
     .tools-card {
-      border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.85);
-      background: radial-gradient(
-        circle at top left,
-        rgba(59, 130, 246, 0.3),
-        rgba(15, 23, 42, 0.98)
-      );
-      padding: 22px 18px 24px;
       text-align: center;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.65);
+      padding: 22px 18px 24px;
     }
 
     .tools-label {
@@ -291,11 +414,11 @@
       margin-top: 6px;
     }
 
-    /* 푸터 (페이지 끝 느낌 + 이메일) */
+    /* 푸터 */
     .footer {
       padding: 40px 0 28px;
       background: transparent;
-      border-top: 1px solid rgba(30, 41, 59, 0.9);
+      border-top: 1px solid rgba(15, 23, 42, 0.9);
     }
 
     .footer-inner {
@@ -307,7 +430,7 @@
     .footer-divider {
       width: 80px;
       height: 1px;
-      background: var(--border);
+      background: rgba(148, 163, 184, 0.45);
       border-radius: 999px;
       margin: 0 auto 14px;
       opacity: 0.85;
@@ -358,14 +481,19 @@
       height: 32px;
       border-radius: 999px;
       border: 1px solid rgba(148, 163, 184, 0.9);
-      background: rgba(15, 23, 42, 0.95);
+      background: radial-gradient(
+        circle at top left,
+        rgba(248, 250, 252, 0.1),
+        rgba(15, 23, 42, 0.95)
+      );
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       font-size: 18px;
       color: #e5e7eb;
-      backdrop-filter: blur(6px);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       box-shadow: 0 10px 25px rgba(15, 23, 42, 0.7);
     }
 
@@ -373,7 +501,11 @@
     .slider-nav.next { right: -6px; }
 
     .slider-nav:hover {
-      background: rgba(30, 64, 175, 0.95);
+      background: radial-gradient(
+        circle at top left,
+        rgba(248, 250, 252, 0.16),
+        rgba(30, 64, 175, 0.98)
+      );
     }
 
     @media (max-width: 768px) {
@@ -395,6 +527,11 @@
   </style>
 </head>
 <body>
+  <!-- liquid glass 배경 블롭 -->
+  <div class="bg-orbit bg-orbit-1"></div>
+  <div class="bg-orbit bg-orbit-2"></div>
+  <div class="bg-orbit bg-orbit-3"></div>
+
   <!-- 상단 작은 바 -->
   <div class="top-bar">
     <div class="top-bar-inner">
@@ -424,7 +561,7 @@
         유튜브 영상 편집을 중심으로 활동 중입니다.<br />
       </p>
 
-      <div class="career-card">
+      <div class="career-card glass-card">
         <ul class="career-list">
           <li class="career-item">
             <div class="career-label">현재</div>
@@ -447,7 +584,7 @@
 
       <div class="video-grid">
         <!-- 롱폼 1 -->
-        <div class="video-wrapper">
+        <div class="video-wrapper glass-card">
           <div class="video-frame">
             <iframe
               src="https://www.youtube.com/embed/RStL7ZQ06W8"
@@ -465,7 +602,7 @@
         </div>
 
         <!-- 롱폼 2 -->
-        <div class="video-wrapper">
+        <div class="video-wrapper glass-card">
           <div class="video-frame">
             <iframe
               src="https://www.youtube.com/embed/jCrx2Gf7TMI"
@@ -483,7 +620,7 @@
         </div>
 
         <!-- 롱폼 3 -->
-        <div class="video-wrapper">
+        <div class="video-wrapper glass-card">
           <div class="video-frame">
             <iframe
               src="https://www.youtube.com/embed/PIyU7OrgmWQ"
@@ -500,28 +637,28 @@
           </p>
         </div>
 
-       <!-- 롱폼 4 -->
-      <div class="video-wrapper">
-        <div class="video-frame">
-          <iframe
-            src="https://www.youtube.com/embed/0kCnnViKokQ"
-            title="Lostand Long-form Video 4"
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-          ></iframe>
+        <!-- 롱폼 4 -->
+        <div class="video-wrapper glass-card">
+          <div class="video-frame">
+            <iframe
+              src="https://www.youtube.com/embed/0kCnnViKokQ"
+              title="Lostand Long-form Video 4"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <p class="video-caption">
+            · 롱폼 영상 4 VR 컨텐츠 <br />
+            · “[빙밍] 메인 콘텐츠 편집본 · 컷 편집·자막·사운드 디자인 전체 진행”
+          </p>
         </div>
-        <p class="video-caption">
-          · 롱폼 영상 4 VR 컨텐츠 <br />
-          · “[빙밍] 메인 콘텐츠 편집본 · 컷 편집·자막·사운드 디자인 전체 진행”
-        </p>
       </div>
-     </div>
     </div>
   </section>
 
-  <!-- 쇼츠 / 숏폼 (가로 슬라이드) -->
+  <!-- 쇼츠 / 숏폼 -->
   <section class="video-section" id="shorts">
     <div class="container reveal">
       <h2 class="section-title">쇼츠 / 숏폼 영상</h2>
@@ -534,7 +671,7 @@
 
         <div class="shorts-track">
           <!-- 쇼츠 1 -->
-          <div class="video-wrapper shorts-item">
+          <div class="video-wrapper glass-card shorts-item">
             <div class="video-frame video-frame-vertical">
               <iframe
                 src="https://www.youtube.com/embed/w85KFHJe4gc"
@@ -551,7 +688,7 @@
           </div>
 
           <!-- 쇼츠 2 -->
-          <div class="video-wrapper shorts-item">
+          <div class="video-wrapper glass-card shorts-item">
             <div class="video-frame video-frame-vertical">
               <iframe
                 src="https://www.youtube.com/embed/HKIBvkfPRjc"
@@ -568,7 +705,7 @@
           </div>
 
           <!-- 쇼츠 3 -->
-          <div class="video-wrapper shorts-item">
+          <div class="video-wrapper glass-card shorts-item">
             <div class="video-frame video-frame-vertical">
               <iframe
                 src="https://www.youtube.com/embed/B8UJgzyDujA"
@@ -593,7 +730,7 @@
   <!-- 사용 가능한 툴 -->
   <section class="tools-section" id="tools">
     <div class="container reveal">
-      <div class="tools-card">
+      <div class="tools-card glass-card">
         <div class="tools-label">사용 가능한 툴</div>
         <div class="tools-line">프리미어 프로 - 상</div>
         <div class="tools-line">에프터이펙트 - 하</div>
@@ -614,28 +751,34 @@
   </footer>
 
   <script>
-    // 스크롤 시 섹션별 슬라이드업 연출 + 쇼츠 슬라이더
     document.addEventListener("DOMContentLoaded", function () {
+      // 1) 스크롤 애니메이션 (IntersectionObserver 사용)
       const reveals = document.querySelectorAll(".reveal");
 
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add("visible");
-            } else {
-              entry.target.classList.remove("visible");
-            }
-          });
-        },
-        {
-          threshold: 0.15,
-          rootMargin: "0px 0px -10% 0px",
-        }
-      );
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+              } else {
+                entry.target.classList.remove("visible");
+              }
+            });
+          },
+          {
+            threshold: 0.18,
+            rootMargin: "0px 0px -10% 0px",
+          }
+        );
 
-      reveals.forEach((el) => observer.observe(el));
+        reveals.forEach((el) => observer.observe(el));
+      } else {
+        // 구형 브라우저용: 그냥 다 보이게
+        reveals.forEach((el) => el.classList.add("visible"));
+      }
 
+      // 2) 쇼츠 슬라이더 버튼
       const track = document.querySelector(".shorts-track");
       const prevBtn = document.querySelector(".slider-nav.prev");
       const nextBtn = document.querySelector(".slider-nav.next");
