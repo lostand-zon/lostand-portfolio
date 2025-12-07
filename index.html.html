@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lostand | Video Editor Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Lostand · 유튜브 영상 편집자 포트폴리오" />
+
+  <!-- 폰트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-alt: #070a18;
+      --accent: #a855ff;
+      --accent-soft: rgba(168, 85, 255, 0.25);
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border: #1f2937;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Pretendard", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(88, 28, 135, 0.32), transparent 55%),
+        radial-gradient(circle at bottom, rgba(15, 23, 42, 0.9), #020617);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: 100%;
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* 공통 섹션 */
+    section { padding: 80px 0; }
+
+    .section-title {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      margin-bottom: 12px;
+    }
+
+    .section-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    /* 스크롤 애니메이션 (더 부드럽게) */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition:
+        opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
+        transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+      will-change: opacity, transform;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-inner { padding: 40px 20px; }
+
+    .hero-name {
+      font-size: clamp(48px, 11vw, 80px);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .hero-name::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -14px;
+      width: 80px;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(to right, #22d3ee, var(--accent));
+    }
+
+    .hero-tagline {
+      margin-top: 30px;
+      font-size: 16px;
+      color: var(--muted);
+    }
+
+    /* 경력 섹션 */
+    .career-section {
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), var(--bg-alt));
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .career-card {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top left, var(--accent-soft), #020617);
+      padding: 24px 22px;
+    }
+
+    .career-list { list-style: none; font-size: 15px; color: var(--text); }
+
+    .career-item {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(55, 65, 81, 0.6);
+    }
+
+    .career-item:last-child { border-bottom: none; }
+
+    .career-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .career-text { font-size: 15px; }
+
+    /* 영상 섹션 공통 */
+    .video-section {
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
+      border-top: 1px solid rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.9);
+    }
+
+    .video-wrapper {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
+      padding: 22px 22px 26px;
+    }
+
+    .video-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #020617;
+    }
+
+    .video-frame-vertical {
+      aspect-ratio: 9 / 16;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    .video-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .video-caption {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    /* 상단 바 */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .top-bar-inner {
+      width: 100%;
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+      opacity: 0.85;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .top-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .top-right a {
+      pointer-events: auto;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    /* 사용 가능한 툴 섹션 */
+    .tools-section {
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
+      border-top: 1px solid var(--border);
+    }
+
+    .tools-card {
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.95), #020617);
+      padding: 22px 18px 24px;
+      text-align: center;
+    }
+
+    .tools-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    .tools-line {
+      font-size: 14px;
+      line-height: 1.9;
+      margin-top: 6px;
+    }
+
+    /* 푸터 (페이지 끝 느낌 + 이메일) */
+    .footer {
+      padding: 40px 0 28px;
+      background: radial-gradient(circle at bottom, #020617, #020617);
+      border-top: 1px solid rgba(15, 23, 42, 0.9);
+    }
+
+    .footer-inner {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .footer-divider {
+      width: 80px;
+      height: 1px;
+      background: var(--border);
+      border-radius: 999px;
+      margin: 0 auto 14px;
+      opacity: 0.85;
+    }
+
+    .footer-email {
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      section { padding: 60px 0; }
+      .career-card,
+      .video-wrapper,
+      .tools-card { padding: 18px 16px 20px; }
+      .section-title { font-size: 22px; }
+      .video-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <!-- 상단 작은 바 -->
+  <div class="top-bar">
+    <div class="top-bar-inner">
+      <div class="top-left">
+        <div class="top-dot"></div>
+        <span>Lostand · Video Editor</span>
+      </div>
+      <div class="top-right">
+        <a href="#longform">롱폼 · 쇼츠 보기</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="hero-inner reveal">
+      <h1 class="hero-name">Lostand</h1>
+      <p class="hero-tagline">당신이 꿈꾸는 영상을 만들어 드립니다</p>
+    </div>
+  </section>
+
+  <!-- 경력 사항 -->
+  <section class="career-section" id="career">
+    <div class="container reveal">
+      <h2 class="section-title">경력 사항</h2>
+      <p class="section-sub">
+        유튜브 영상 편집을 중심으로 활동 중입니다.<br />
+      </p>
+
+      <div class="career-card">
+        <ul class="career-list">
+          <li class="career-item">
+            <div class="career-label">현재</div>
+            <div class="career-text">
+              2만 빙밍 유튜브 편집자 (2025.01.17 ~) - 편집
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 롱폼 영상 -->
+  <section class="video-section" id="longform">
+    <div class="container reveal">
+      <h2 class="section-title">롱폼 영상</h2>
+      <p class="section-sub">
+        편집 스타일, 흐름, 리듬을 가장 잘 보여줄 수 있는 긴 호흡의 콘텐츠를 모아두는 공간입니다.
+      </p>
+
+      <div class="video-grid">
+        <!-- 롱폼 1 -->
+        <div class="video-wrapper">
+          <div class="video-frame">
+            <iframe
+              src="https://www.youtube.com/embed/RStL7ZQ06W8"
+              title="Lostand Long-form Video 1"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <p class="video-caption">
+            · 롱폼 영상 1 게임 및 저스트 채팅 <br />
+            · “[빙밍] 메인 콘텐츠 편집본 · 컷 편집·자막·사운드 디자인 전체 진행”
+          </p>
+        </div>
+
+        <!-- 롱폼 2 -->
+        <div class="video-wrapper">
+          <div class="video-frame">
+            <iframe
+              src="https://www.youtube.com/embed/jCrx2Gf7TMI"
+              title="Lostand Long-form Video 2"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <p class="video-caption">
+            · 롱폼 영상 2 VR 컨텐츠 <br />
+            · “[빙밍] 메인 콘텐츠 편집본 · 컷 편집·자막·사운드 디자인 전체 진행”
+          </p>
+        </div>
+
+        <!-- 롱폼 3 -->
+        <div class="video-wrapper">
+          <div class="video-frame">
+            <iframe
+              src="https://www.youtube.com/embed/PIyU7OrgmWQ"
+              title="Lostand Long-form Video 3"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <p class="video-caption">
+            · 롱폼 영상 3 게임 <br />
+            · "[빙밍] 메인 콘텐츠 편집본 · 컷 편집·자막·사운드 디자인 전체 진행"
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 쇼츠 / 숏폼 -->
+  <section class="video-section" id="shorts">
+    <div class="container reveal">
+      <h2 class="section-title">쇼츠 / 숏폼 영상</h2>
+      <p class="section-sub">
+        짧은 길이의 숏폼 영상을 따로 모아 보여주는 섹션입니다.
+      </p>
+
+      <div class="video-grid">
+        <!-- 쇼츠 1 -->
+        <div class="video-wrapper">
+          <div class="video-frame video-frame-vertical">
+            <iframe
+              src="https://www.youtube.com/embed/w85KFHJe4gc"
+              title="Lostand Shorts Video 1"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <p class="video-caption">
+            · 쇼츠/숏폼 영상 1 <br />
+          </p>
+        </div>
+
+        <!-- 쇼츠 2 -->
+        <div class="video-wrapper">
+          <div class="video-frame video-frame-vertical">
+            <iframe
+              src="https://www.youtube.com/embed/HKIBvkfPRjc"
+              title="Lostand Shorts Video 2"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <p class="video-caption">
+            · 쇼츠/숏폼 영상 2 <br />
+          </p>
+        </div>
+
+        <!-- 쇼츠 3 -->
+        <div class="video-wrapper">
+          <div class="video-frame video-frame-vertical">
+            <iframe
+              src="https://www.youtube.com/embed/B8UJgzyDujA"
+              title="Lostand Shorts Video 3"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <p class="video-caption">
+            · 쇼츠/숏폼 영상 3 <br />
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 사용 가능한 툴 -->
+  <section class="tools-section" id="tools">
+    <div class="container reveal">
+      <div class="tools-card">
+        <div class="tools-label">사용 가능한 툴</div>
+        <div class="tools-line">프리미어 프로 - 상</div>
+        <div class="tools-line">에프터이펙트 - 하</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 페이지 끝 · 이메일 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-divider"></div>
+        <p class="footer-email">
+          이메일 주소 - <a href="mailto:lostand26@gmail.com">lostand26@gmail.com</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 스크롤 시 섹션별 페이드업 애니메이션
+    // 위/아래로 움직일 때마다 다시 애니메이션 되도록, 보이면 visible 추가 · 안 보이면 제거
+    document.addEventListener("DOMContentLoaded", function () {
+      const reveals = document.querySelectorAll(".reveal");
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            } else {
+              entry.target.classList.remove("visible");
+            }
+          });
+        },
+        {
+          threshold: 0.15,
+          rootMargin: "0px 0px -10% 0px",
+        }
+      );
+
+      reveals.forEach((el) => observer.observe(el));
+    });
+  </script>
+</body>
+</html>
