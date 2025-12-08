@@ -268,7 +268,6 @@
 
     /* ===========================
        유리 / 리퀴드 글라스 카드
-       배경이 더 비치게 + 렌즈 느낌
        =========================== */
     .glass-card {
       position: relative;
@@ -629,7 +628,7 @@
     .longform-slider-wrapper.to-slider .slider-item:nth-child(1),
     .shorts-slider-wrapper.to-slider .slider-item:nth-child(1) { animation-delay: 0ms; }
     .longform-slider-wrapper.to-slider .slider-item:nth-child(2),
-    .shorts-slider-wrapper.to-slider .slider-item:nth-child(2) { animation-delay: 60ms; }
+    .shorts-slider-wrapper.view-grid .slider-item:nth-child(2) { animation-delay: 60ms; }
     .longform-slider-wrapper.to-slider .slider-item:nth-child(3),
     .shorts-slider-wrapper.to-slider .slider-item:nth-child(3) { animation-delay: 120ms; }
     .longform-slider-wrapper.to-slider .slider-item:nth-child(4),
@@ -963,7 +962,7 @@
     </div>
   </section>
 
-  <!-- 사용 가능한 툴 (경력 카드 스타일로 변경) -->
+  <!-- 사용 가능한 툴 (경력 카드 스타일) -->
   <section class="tools-section" id="tools">
     <div class="container reveal">
       <h2 class="section-title">사용 가능한 툴</h2>
@@ -1002,9 +1001,11 @@
     document.addEventListener("DOMContentLoaded", function () {
       const reveals = document.querySelectorAll(".reveal");
       const scrollGradient = document.querySelector(".scroll-gradient");
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      // reveal 애니메이션: 한 번만 실행
-      if ("IntersectionObserver" in window) {
+      /* 한 번만 실행되는 reveal 애니메이션 */
+      if ("IntersectionObserver" in window && !prefersReducedMotion) {
         const observer = new IntersectionObserver(
           (entries, observerInstance) => {
             entries.forEach((entry) => {
@@ -1025,9 +1026,13 @@
         reveals.forEach((el) => el.classList.add("visible"));
       }
 
-      // 스크롤 진행도에 따라 그라데이션 opacity 조절
+      /* 스크롤 진행도에 따라 그라데이션 opacity 조절 (모바일은 비활성) */
       function setupScrollGradient() {
         if (!scrollGradient) return;
+        if (isMobile) {
+          scrollGradient.style.opacity = "0";
+          return;
+        }
 
         let ticking = false;
 
@@ -1056,8 +1061,10 @@
 
       setupScrollGradient();
 
-      // 좌우 스크롤 시 카드 탱글 모션
+      /* 좌우 스크롤 시 카드 탱글 모션 (모바일 / 모션 최소 환경에서는 비활성) */
       function setupLiquidSlider(trackSelector) {
+        if (isMobile || prefersReducedMotion) return;
+
         const track = document.querySelector(trackSelector);
         if (!track) return;
 
@@ -1101,11 +1108,11 @@
       setupLiquidSlider(".longform-track");
       setupLiquidSlider(".shorts-track");
 
-      // 아래로 스크롤할 때: 롱폼 앞 두 개 + 숏폼 앞 세 개만 순차적 pop-in
+      /* 카드 pop-in */
       const longformItems = document.querySelectorAll(".longform-track .slider-item");
       const shortsItems = document.querySelectorAll(".shorts-track .slider-item");
 
-      if ("IntersectionObserver" in window) {
+      if ("IntersectionObserver" in window && !isMobile && !prefersReducedMotion) {
         const videoObserver = new IntersectionObserver(
           (entries, observer) => {
             entries.forEach((entry) => {
@@ -1153,9 +1160,9 @@
         shortsItems.forEach((el) => el.classList.add("video-visible"));
       }
 
-      // 경력 카드, 툴 카드(현재는 career-card 재사용) 등장 모션
+      /* 경력 카드, 툴 카드 등장 모션 (career-card 공통 사용) */
       const blockCards = document.querySelectorAll(".career-card");
-      if ("IntersectionObserver" in window) {
+      if ("IntersectionObserver" in window && !prefersReducedMotion) {
         const blockObserver = new IntersectionObserver(
           (entries, observer) => {
             entries.forEach((entry) => {
@@ -1175,7 +1182,7 @@
         blockCards.forEach((el) => el.classList.add("visible-block"));
       }
 
-      // 롱폼 전체 보기 토글
+      /* 롱폼 전체 보기 토글 */
       const longformWrapper = document.querySelector(".longform-slider-wrapper");
       const longformToggleBtn = document.querySelector(".longform-view-toggle");
 
@@ -1201,7 +1208,7 @@
         });
       }
 
-      // 숏폼 전체 보기 토글
+      /* 숏폼 전체 보기 토글 */
       const shortsWrapper = document.querySelector(".shorts-slider-wrapper");
       const shortsToggleBtn = document.querySelector(".shorts-view-toggle");
 
@@ -1223,6 +1230,86 @@
             setTimeout(() => {
               shortsWrapper.classList.remove("to-slider");
             }, 600);
+          }
+        });
+      }
+
+      /* 상단 "롱폼 · 숏폼 보기" 버튼: 롱폼 ↔ 숏폼 번갈아 이동
+         - 롱폼 이동 시 섹션이 화면 중앙보다 살짝 위에 오도록 오프셋
+         - 이름 섹션 근처로 올라가면 순서 초기화(다음 클릭은 다시 롱폼부터)
+         - 자동 스크롤 중에는 초기화 로직이 작동하지 않도록 분리 */
+      const topToggleLink = document.querySelector(".top-right a");
+      const longformSection = document.getElementById("longform");
+      const shortsSection = document.getElementById("shorts");
+      const heroSection = document.getElementById("top");
+      const topBar = document.querySelector(".top-bar");
+
+      let toggleState = 0; // 0: 다음 클릭은 롱폼, 1: 다음 클릭은 숏폼
+      let isAutoScrolling = false;
+      let autoScrollTimeoutId = null;
+
+      function scrollToSection(section) {
+        if (!section) return;
+        const rect = section.getBoundingClientRect();
+        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const topBarHeight = topBar ? topBar.offsetHeight : 0;
+        const docHeight = document.documentElement.scrollHeight;
+        let targetY;
+
+        if (section.id === "longform") {
+          // 롱폼 섹션 중앙을 기준으로, 화면 중앙보다 살짝 '위'로 오도록
+          const sectionCenter = rect.top + currentScroll + rect.height / 2;
+          const extraOffset = 40; // 위로 살짝 올리기
+          targetY = sectionCenter - viewportHeight / 2 - topBarHeight / 2 + extraOffset;
+        } else {
+          // 다른 섹션은 상단이 헤더 아래에 오도록
+          targetY = rect.top + currentScroll - topBarHeight - 8;
+        }
+
+        const maxScroll = Math.max(docHeight - viewportHeight, 0);
+        targetY = Math.max(0, Math.min(targetY, maxScroll));
+
+        isAutoScrolling = true;
+        if (autoScrollTimeoutId) clearTimeout(autoScrollTimeoutId);
+        autoScrollTimeoutId = setTimeout(() => {
+          isAutoScrolling = false;
+        }, 800);
+
+        if (prefersReducedMotion) {
+          window.scrollTo(0, targetY);
+        } else {
+          window.scrollTo({
+            top: targetY,
+            behavior: "smooth",
+          });
+        }
+      }
+
+      if (topToggleLink && longformSection && shortsSection) {
+        topToggleLink.addEventListener("click", (event) => {
+          event.preventDefault();
+
+          const targetSection =
+            toggleState === 0 ? longformSection : shortsSection;
+
+          scrollToSection(targetSection);
+
+          // 클릭할 때마다 롱폼 ↔ 숏폼 순환
+          toggleState = (toggleState + 1) % 2;
+        });
+      }
+
+      // 이름(HERO) 섹션 근처로 스크롤되면 버튼 순서 초기화(다음 클릭은 다시 롱폼부터)
+      if (heroSection) {
+        window.addEventListener("scroll", () => {
+          if (isAutoScrolling) return; // 자동 스크롤 중에는 초기화 금지
+
+          const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+          const heroHeight = heroSection.offsetHeight || window.innerHeight;
+          // 화면이 이름 섹션 상단 근처에 있을 때만 리셋
+          if (scrollY < heroHeight * 0.6) {
+            toggleState = 0;
           }
         });
       }
