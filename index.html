@@ -274,24 +274,18 @@
       position: relative;
       overflow: hidden;
       border-radius: 26px;
-
-      /* 뒷배경이 충분히 보이도록 알파 낮춤 */
       background:
         linear-gradient(
           145deg,
           rgba(255, 255, 255, 0.38),
           rgba(255, 255, 255, 0.02)
         );
-
       border: 1px solid rgba(255, 255, 255, 0.70);
-
       box-shadow:
         0 22px 60px rgba(15, 23, 42, 0.16),
         0 0 0 1px rgba(148, 163, 184, 0.05);
-
       backdrop-filter: blur(26px) saturate(175%);
       -webkit-backdrop-filter: blur(26px) saturate(175%);
-
       transform-style: preserve-3d;
     }
 
@@ -654,8 +648,7 @@
 
       section { padding: 60px 0; }
       .career-card,
-      .video-wrapper,
-      .tools-card { padding: 22px 18px 26px; }
+      .video-wrapper { padding: 22px 18px 26px; }
       .section-title { font-size: 22px; }
 
       .slider-track {
@@ -670,8 +663,7 @@
 
     /* 카드 공통: 등장 + hover 스케일 */
     .career-card,
-    .slider-item,
-    .tools-card {
+    .slider-item {
       --offsetY: 0px;
       --scaleBase: 1;
       --hoverScale: 1;
@@ -684,8 +676,7 @@
       will-change: transform, opacity;
     }
 
-    .career-card,
-    .tools-card {
+    .career-card {
       --offsetY: 18px;
     }
 
@@ -695,7 +686,6 @@
     }
 
     .career-card.visible-block,
-    .tools-card.visible-block,
     .slider-item.video-visible {
       opacity: 1;
       --offsetY: 0px;
@@ -703,8 +693,7 @@
     }
 
     .career-card:hover,
-    .slider-item:hover,
-    .tools-card:hover {
+    .slider-item:hover {
       --hoverScale: 1.015;
     }
 
@@ -719,29 +708,6 @@
     .longform-slider-wrapper:not(.view-grid) .longform-track .slider-item {
       flex: 0 0 calc((100% - 18px) / 2);
       max-width: calc((100% - 18px) / 2);
-    }
-
-    /* 사용 가능한 툴 섹션 */
-    .tools-section {
-      border-top: 1px solid var(--border);
-    }
-
-    .tools-card {
-      text-align: center;
-      padding: 32px 26px 36px;
-    }
-
-    .tools-label {
-      font-size: 13px;
-      color: var(--muted-strong);
-      margin-bottom: 16px;
-      letter-spacing: 0.12em;
-    }
-
-    .tools-line {
-      font-size: 15px;
-      line-height: 2.1;
-      margin-top: 8px;
     }
 
     /* 푸터 */
@@ -997,13 +963,25 @@
     </div>
   </section>
 
-  <!-- 사용 가능한 툴 -->
+  <!-- 사용 가능한 툴 (경력 카드 스타일로 변경) -->
   <section class="tools-section" id="tools">
     <div class="container reveal">
-      <div class="tools-card glass-card">
-        <div class="tools-label">사용 가능한 툴</div>
-        <div class="tools-line">프리미어 프로 - 상</div>
-        <div class="tools-line">에프터이펙트 - 하</div>
+      <h2 class="section-title">사용 가능한 툴</h2>
+      <p class="section-sub">
+        주로 사용하는 편집 툴과 숙련도를 정리했습니다.
+      </p>
+
+      <div class="career-card glass-card">
+        <ul class="career-list">
+          <li class="career-item">
+            <div class="career-label">편집</div>
+            <div class="career-text">프리미어 프로 · 상</div>
+          </li>
+          <li class="career-item">
+            <div class="career-label">모션 그래픽</div>
+            <div class="career-text">에프터이펙트 · 하</div>
+          </li>
+        </ul>
       </div>
     </div>
   </section>
@@ -1025,14 +1003,14 @@
       const reveals = document.querySelectorAll(".reveal");
       const scrollGradient = document.querySelector(".scroll-gradient");
 
+      // reveal 애니메이션: 한 번만 실행
       if ("IntersectionObserver" in window) {
         const observer = new IntersectionObserver(
-          (entries) => {
+          (entries, observerInstance) => {
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
                 entry.target.classList.add("visible");
-              } else {
-                entry.target.classList.remove("visible");
+                observerInstance.unobserve(entry.target);
               }
             });
           },
@@ -1047,7 +1025,7 @@
         reveals.forEach((el) => el.classList.add("visible"));
       }
 
-      // 스크롤 진행도에 따라 아이폰 감성 그라데이션 opacity 조절
+      // 스크롤 진행도에 따라 그라데이션 opacity 조절
       function setupScrollGradient() {
         if (!scrollGradient) return;
 
@@ -1078,7 +1056,7 @@
 
       setupScrollGradient();
 
-      // 좌우 스크롤 시 카드 탱글 모션 (최적화 버전)
+      // 좌우 스크롤 시 카드 탱글 모션
       function setupLiquidSlider(trackSelector) {
         const track = document.querySelector(trackSelector);
         if (!track) return;
@@ -1175,8 +1153,8 @@
         shortsItems.forEach((el) => el.classList.add("video-visible"));
       }
 
-      // 경력 카드, 툴 카드 등장 모션
-      const blockCards = document.querySelectorAll(".career-card, .tools-card");
+      // 경력 카드, 툴 카드(현재는 career-card 재사용) 등장 모션
+      const blockCards = document.querySelectorAll(".career-card");
       if ("IntersectionObserver" in window) {
         const blockObserver = new IntersectionObserver(
           (entries, observer) => {
@@ -1197,7 +1175,7 @@
         blockCards.forEach((el) => el.classList.add("visible-block"));
       }
 
-      // 롱폼 전체 보기 토글 (슬라이더 <-> 2열 그리드)
+      // 롱폼 전체 보기 토글
       const longformWrapper = document.querySelector(".longform-slider-wrapper");
       const longformToggleBtn = document.querySelector(".longform-view-toggle");
 
@@ -1223,7 +1201,7 @@
         });
       }
 
-      // 숏폼 전체 보기 토글 (슬라이더 <-> 3열 그리드)
+      // 숏폼 전체 보기 토글
       const shortsWrapper = document.querySelector(".shorts-slider-wrapper");
       const shortsToggleBtn = document.querySelector(".shorts-view-toggle");
 
