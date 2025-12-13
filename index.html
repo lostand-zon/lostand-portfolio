@@ -1064,52 +1064,7 @@
 
       setupScrollGradient();
 
-      /* 좌우 스크롤 시 카드 탱글 모션 (모바일 / 모션 최소 환경에서는 비활성) */
-      function setupLiquidSlider(trackSelector) {
-        if (isMobile || prefersReducedMotion) return;
-
-        const track = document.querySelector(trackSelector);
-        if (!track) return;
-
-        const items = track.querySelectorAll(".slider-item");
-        let lastScrollLeft = track.scrollLeft;
-        let scrollTimeout = null;
-        let ticking = false;
-
-        track.addEventListener("scroll", () => {
-          const current = track.scrollLeft;
-
-          if (!ticking) {
-            window.requestAnimationFrame(() => {
-              const velocity = current - lastScrollLeft;
-              lastScrollLeft = current;
-
-              const intensity = Math.max(-1, Math.min(1, velocity / 100));
-              const offsetY = -Math.abs(intensity) * 4;
-              const scaleBase = 1 + Math.abs(intensity) * 0.03;
-
-              items.forEach((el) => {
-                el.style.setProperty("--offsetY", offsetY + "px");
-                el.style.setProperty("--scaleBase", String(scaleBase));
-              });
-
-              ticking = false;
-
-              if (scrollTimeout) clearTimeout(scrollTimeout);
-              scrollTimeout = setTimeout(() => {
-                items.forEach((el) => {
-                  el.style.setProperty("--offsetY", "0px");
-                  el.style.setProperty("--scaleBase", "1");
-                });
-              }, 120);
-            });
-            ticking = true;
-          }
-        });
-      }
-
-      setupLiquidSlider(".longform-track");
-      setupLiquidSlider(".shorts-track");
+      /* ✅ 슬라이더 움직일 때 카드에 걸리던 모션(탱글/스케일/오프셋) 제거됨 */
 
       /* 카드 pop-in */
       const longformItems = document.querySelectorAll(".longform-track .slider-item");
