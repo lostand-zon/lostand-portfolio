@@ -24,6 +24,9 @@
       --muted: #9ca3af;
       --muted-strong: #4b5563;
       --border: rgba(148, 163, 184, 0.3);
+      
+      /* 최적화된 부드러운 이징 곡선 (Exponential Ease Out) */
+      --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -55,12 +58,11 @@
       padding: 0 20px;
     }
 
-    /* 롱폼 섹션만 컨테이너 폭을 더 넓게 → 한 화면 2개 유지하면서 카드 크기 확대 */
     #longform .container {
       max-width: 1200px;
     }
 
-    /* 스크롤에 따라 색이 진해지는 전체 그라데이션 레이어 */
+    /* 스크롤 그라데이션 레이어 - will-change로 최적화 */
     .scroll-gradient {
       position: fixed;
       inset: 0;
@@ -74,20 +76,24 @@
         rgba(244, 143, 177, 0.30) 100%
       );
       opacity: 0;
-      transition: opacity 0.18s linear;
+      transition: opacity 0.3s linear;
+      will-change: opacity;
     }
 
-    /* 뒤쪽 liquid glass 블롭 (톤 약하게) */
+    /* 배경 블롭 최적화 */
     .bg-orbit {
       position: fixed;
-      border-radius: 999px;
-      filter: blur(40px);
+      border-radius: 50%; /* 999px 대신 50% 사용 (렌더링 미세 최적화) */
+      filter: blur(50px); /* 블러 값 증가로 더 부드럽게 */
       opacity: 0.22;
       mix-blend-mode: screen;
       pointer-events: none;
       z-index: -1;
       transform-origin: center;
-      animation: floatBlob 18s ease-in-out infinite alternate;
+      /* 하드웨어 가속 강제 */
+      will-change: transform;
+      transform: translate3d(0,0,0); 
+      animation: floatBlob 20s ease-in-out infinite alternate;
     }
 
     .bg-orbit-1 {
@@ -104,7 +110,7 @@
       bottom: -120px;
       right: -140px;
       background: radial-gradient(circle at 70% 40%, #a855ff, transparent 60%);
-      animation-delay: 3s;
+      animation-delay: -5s; /* 음수 딜레이로 처음부터 움직이는 것처럼 */
     }
 
     .bg-orbit-3 {
@@ -114,7 +120,7 @@
       left: 55%;
       background: radial-gradient(circle at 50% 50%, #22c55e, transparent 65%);
       opacity: 0.2;
-      animation-delay: 6s;
+      animation-delay: -10s;
     }
 
     @keyframes floatBlob {
@@ -123,7 +129,6 @@
       100% { transform: translate3d(-20px, 26px, 0) scale(1.03); }
     }
 
-    /* glass 카드 내부 하이라이트 움직임 */
     @keyframes glassFlow {
       0% {
         transform: translate3d(-14px, -8px, 0);
@@ -139,8 +144,7 @@
       }
     }
 
-    /* 공통 섹션 */
-    section { padding: 80px 0; }
+    section { padding: 100px 0; } /* 여백 살짝 증가로 시원한 느낌 */
 
     .section-title {
       font-size: 26px;
@@ -153,9 +157,9 @@
       font-size: 14px;
       color: var(--muted-strong);
       margin-bottom: 24px;
+      line-height: 1.6;
     }
 
-    /* 섹션 헤더 (제목 + 우측 버튼) */
     .section-header {
       display: flex;
       align-items: center;
@@ -165,44 +169,38 @@
     }
 
     .view-toggle-btn {
-      padding: 6px 14px;
+      padding: 7px 16px;
       font-size: 12px;
       border-radius: 999px;
       border: 1px solid rgba(148, 163, 184, 0.7);
       background: radial-gradient(
         circle at top left,
-        rgba(248, 250, 252, 0.9),
-        rgba(241, 245, 249, 0.9)
+        rgba(248, 250, 252, 0.95),
+        rgba(241, 245, 249, 0.95)
       );
       color: var(--muted-strong);
       cursor: pointer;
       white-space: nowrap;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-      transition:
-        background 0.2s ease-out,
-        box-shadow 0.2s ease-out,
-        transform 0.2s ease-out,
-        border-color 0.2s ease-out;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+      transition: all 0.3s var(--ease-smooth);
     }
 
     .view-toggle-btn:hover {
-      transform: translateY(-1px);
+      transform: translateY(-2px);
       border-color: rgba(148, 163, 184, 0.9);
-      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
     }
 
     .view-toggle-btn:active {
       transform: translateY(0);
-      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
     }
 
-    /* 텍스트/컨테이너용 reveal 애니메이션 */
+    /* REVEAL 애니메이션 최적화 */
     .reveal {
       opacity: 0;
-      transform: translateY(26px);
-      transition:
-        opacity 0.8s cubic-bezier(0.22, 0.61, 0.36, 1),
-        transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+      transform: translateY(30px);
+      transition: opacity 1s var(--ease-smooth), transform 1s var(--ease-smooth);
       will-change: opacity, transform;
     }
     .reveal.visible {
@@ -233,7 +231,11 @@
       letter-spacing: 0.18em;
       text-transform: uppercase;
       margin-bottom: 16px;
-      text-shadow: 0 0 18px rgba(148, 163, 184, 0.35);
+      text-shadow: 0 0 20px rgba(148, 163, 184, 0.3);
+      background: linear-gradient(135deg, #111827 30%, #4b5563 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
     }
 
     .hero-name::after {
@@ -243,10 +245,10 @@
       transform: translateX(-50%);
       bottom: -14px;
       width: 110px;
-      height: 2px;
+      height: 3px;
       border-radius: 999px;
-      background: linear-gradient(to right, #22d3ee, #a855ff);
-      box-shadow: 0 0 12px rgba(168, 85, 255, 0.5);
+      background: linear-gradient(90deg, #22d3ee, #a855ff);
+      box-shadow: 0 2px 12px rgba(168, 85, 255, 0.4);
     }
 
     .hero-tagline {
@@ -255,74 +257,51 @@
       color: var(--muted-strong);
       position: relative;
       z-index: 1;
+      opacity: 0.9;
     }
 
-    /* 섹션 구분선 */
     .career-section,
     .video-section,
     .tools-section {
       background: transparent;
-      border-top: 1px solid rgba(148, 163, 184, 0.25);
-      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+      border-top: 1px solid rgba(148, 163, 184, 0.15);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
     }
 
-    /* ===========================
-       유리 / 리퀴드 글라스 카드
-       =========================== */
+    /* Glass Card 최적화 */
     .glass-card {
       position: relative;
       overflow: hidden;
       border-radius: 26px;
-      background:
-        linear-gradient(
-          145deg,
-          rgba(255, 255, 255, 0.38),
-          rgba(255, 255, 255, 0.02)
-        );
-      border: 1px solid rgba(255, 255, 255, 0.70);
-      box-shadow:
-        0 22px 60px rgba(15, 23, 42, 0.16),
-        0 0 0 1px rgba(148, 163, 184, 0.05);
-      backdrop-filter: blur(26px) saturate(175%);
-      -webkit-backdrop-filter: blur(26px) saturate(175%);
+      background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.4),
+        rgba(255, 255, 255, 0.1)
+      );
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 
+        0 20px 50px rgba(15, 23, 42, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
       transform-style: preserve-3d;
+      backface-visibility: hidden; /* 깜빡임 방지 */
     }
 
+    /* before 가상요소 애니메이션 성능 개선 */
     .glass-card::before {
       content: "";
       position: absolute;
-      inset: -40%;
+      inset: -50%; /* 여유 공간 확보 */
       background:
-        radial-gradient(
-          ellipse at 50% -10%,
-          rgba(255, 255, 255, 0.90),
-          transparent 60%
-        ),
-        radial-gradient(
-          circle at 0% 0%,
-          rgba(255, 255, 255, 0.55),
-          transparent 55%
-        ),
-        radial-gradient(
-          circle at 110% 10%,
-          rgba(129, 212, 250, 0.18),
-          transparent 60%
-        ),
-        radial-gradient(
-          circle at -10% 110%,
-          rgba(179, 157, 219, 0.17),
-          transparent 60%
-        ),
-        radial-gradient(
-          circle at 120% 120%,
-          rgba(244, 143, 177, 0.14),
-          transparent 60%
-        );
-      opacity: 0.62;
-      mix-blend-mode: screen;
+        radial-gradient(ellipse at 50% -10%, rgba(255, 255, 255, 0.8), transparent 60%),
+        radial-gradient(circle at 110% 10%, rgba(129, 212, 250, 0.15), transparent 60%),
+        radial-gradient(circle at -10% 110%, rgba(179, 157, 219, 0.15), transparent 60%);
+      opacity: 0.6;
+      mix-blend-mode: overlay;
       pointer-events: none;
-      transform: translate3d(-10px, -4px, 0);
-      animation: glassFlow 22s ease-in-out infinite alternate;
+      will-change: transform; /* 성능 최적화 핵심 */
+      animation: glassFlow 25s ease-in-out infinite alternate;
     }
 
     .glass-card::after {
@@ -330,27 +309,21 @@
       position: absolute;
       inset: 0;
       border-radius: inherit;
-      border: 1px solid rgba(255, 255, 255, 0.55);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.9),
-        inset 0 0 16px rgba(255, 255, 255, 0.18),
-        inset 0 -16px 26px rgba(148, 163, 184, 0.13);
-      mix-blend-mode: screen;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black, transparent); 
+      -webkit-mask-image: linear-gradient(to bottom, black, transparent);
       pointer-events: none;
     }
 
     .glass-card:hover {
-      --hoverScale: 1.03;
-      --offsetY: -6px;
-      box-shadow:
-        0 30px 82px rgba(15, 23, 42, 0.22),
-        0 0 0 1px rgba(148, 163, 184, 0.10);
+      --hoverScale: 1.02;
+      box-shadow: 
+        0 30px 60px rgba(15, 23, 42, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.4) inset;
     }
 
-    /* 경력 카드 내용 */
-    .career-card {
-      padding: 24px 22px;
-    }
+    .career-card { padding: 28px 26px; }
 
     .career-list {
       list-style: none;
@@ -361,30 +334,21 @@
     }
 
     .career-item {
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
     }
-
     .career-item:last-child { border-bottom: none; }
 
     .career-label {
       font-size: 13px;
       color: var(--muted-strong);
       margin-bottom: 6px;
+      font-weight: 500;
     }
+    .career-text { font-size: 16px; font-weight: 400; }
 
-    .career-text { font-size: 15px; }
-
-    /* 영상 섹션 공통 */
-    .video-wrapper {
-      padding: 22px 22px 26px;
-      margin: 0;
-    }
-
-    .video-wrapper .video-caption {
-      position: relative;
-      z-index: 1;
-    }
+    .video-wrapper { padding: 20px; }
+    .video-caption { position: relative; z-index: 1; }
 
     .video-frame {
       position: relative;
@@ -392,28 +356,10 @@
       aspect-ratio: 16 / 9;
       border-radius: 16px;
       overflow: hidden;
-      background: radial-gradient(
-        circle at top left,
-        rgba(255, 255, 255, 0.36),
-        rgba(15, 23, 42, 0.85)
-      );
-      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
+      background: #f1f5f9; /* 로딩 전 배경색 */
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
       isolation: isolate;
-    }
-
-    .video-frame::before {
-      content: "";
-      position: absolute;
-      inset: -20%;
-      background: radial-gradient(
-        circle at 10% 0%,
-        rgba(255, 255, 255, 0.40),
-        transparent 55%
-      );
-      opacity: 0.7;
-      mix-blend-mode: screen;
-      pointer-events: none;
-      z-index: 1;
+      transform: translateZ(0); /* 둥근 모서리 마스킹 최적화 */
     }
 
     .video-frame-vertical {
@@ -434,7 +380,8 @@
     .video-caption {
       font-size: 13px;
       color: var(--muted-strong);
-      margin-top: 10px;
+      margin-top: 14px;
+      line-height: 1.5;
     }
 
     /* 상단 바 */
@@ -443,12 +390,12 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 56px;
+      height: 60px;
       display: flex;
       align-items: center;
       z-index: 30;
       pointer-events: none;
-      background: linear-gradient(to bottom, rgba(249, 250, 251, 0.96), transparent);
+      background: linear-gradient(to bottom, rgba(253, 253, 253, 0.8) 0%, transparent 100%);
     }
 
     .top-bar-inner {
@@ -460,228 +407,148 @@
       justify-content: space-between;
       align-items: center;
       font-size: 12px;
-      color: var(--muted-strong);
-      opacity: 0.98;
       pointer-events: auto;
     }
 
     .top-left {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
+      gap: 8px;
+      padding: 8px 16px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
 
     .top-dot {
       width: 8px;
       height: 8px;
-      border-radius: 999px;
+      border-radius: 50%;
       background: #22c55e;
-      box-shadow: 0 0 8px rgba(34, 197, 94, 0.9);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
     }
 
     .top-right a {
-      padding: 6px 14px;
+      padding: 8px 18px;
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.8);
-      background: radial-gradient(
-        circle at top left,
-        rgba(255, 255, 255, 0.95),
-        rgba(241, 245, 249, 0.9)
-      );
-      font-size: 11px;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(255, 255, 255, 0.85);
+      font-size: 12px;
+      font-weight: 500;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    }
+    .top-right a:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
     }
 
-    /* 공통 슬라이더 스타일 (롱폼/숏폼 기본: 가로 슬라이더) */
+    /* 슬라이더 */
     .slider-wrapper {
       position: relative;
-      margin-top: 12px;
+      margin-top: 20px;
     }
 
     .slider-track {
       display: flex;
-      gap: 18px;
+      gap: 24px;
       overflow-x: auto;
-      padding: 4px 0 18px;
+      padding: 10px 4px 30px; /* 그림자 잘림 방지용 패딩 */
       scroll-behavior: smooth;
-      margin: 0;
+      margin: 0 -4px;
     }
 
-    /* 슬라이더 바 – 두께 20px */
-    .slider-track::-webkit-scrollbar {
-      height: 20px;
-    }
-
+    .slider-track::-webkit-scrollbar { height: 8px; }
     .slider-track::-webkit-scrollbar-track {
-      background: rgba(148, 163, 184, 0.18);
-      border-radius: 999px;
-      box-shadow:
-        inset 0 0 0 1px rgba(209, 213, 219, 0.9),
-        inset 0 0 6px rgba(148, 163, 184, 0.5);
+      background: transparent;
+      margin: 0 20px;
     }
-
     .slider-track::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.55);
-      border-radius: 999px;
-      border: 1px solid rgba(248, 250, 252, 0.9);
-      box-shadow: none;
-      transition:
-        background 0.2s.ease-out,
-        border-color 0.2s.ease-out;
+      background: rgba(148, 163, 184, 0.3);
+      border-radius: 10px;
+      transition: background 0.3s;
     }
-
     .slider-track::-webkit-scrollbar-thumb:hover {
-      background: rgba(107, 114, 128, 0.8);
-      border-color: rgba(255, 255, 255, 1);
+      background: rgba(148, 163, 184, 0.6);
     }
 
-    /* 롱폼: 전체 보기(2열 그리드) 모드 */
+    /* 롱폼 그리드 뷰 */
     .longform-slider-wrapper.view-grid .longform-track {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
       overflow: visible;
-      padding-bottom: 4px;
+      padding-bottom: 10px;
     }
-
-    .longform-slider-wrapper.view-grid .longform-track::-webkit-scrollbar {
-      display: none;
-    }
-
     .longform-slider-wrapper.view-grid .slider-item {
       flex: 0 0 auto;
       width: 100%;
     }
 
-    /* 숏폼: 전체 보기(3열 그리드) */
+    /* 숏폼 그리드 뷰 */
     .shorts-slider-wrapper.view-grid .shorts-track {
       display: grid;
-      grid-template-columns: repeat(3, 315px);
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       justify-content: center;
-      gap: 20px;
+      gap: 24px;
       overflow: visible;
-      padding-bottom: 4px;
+      padding-bottom: 10px;
     }
-
-    .shorts-slider-wrapper.view-grid .shorts-track::-webkit-scrollbar {
-      display: none;
-    }
-
     .shorts-slider-wrapper.view-grid .slider-item {
       flex: 0 0 auto;
-      width: 315px;
+      width: 100%;
+      max-width: 340px;
+      margin: 0 auto;
     }
 
-    /* 전체 보기 전환 시 카드 팝업 모션 */
+    /* Grid/Slider 전환 애니메이션 - 부드러운 곡선 적용 */
     @keyframes gridEnter {
-      0% {
-        opacity: 0;
-        transform: translateY(18px) scale(0.96);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      0% { opacity: 0; transform: translateY(20px) scale(0.98); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .longform-slider-wrapper.view-grid .slider-item,
     .shorts-slider-wrapper.view-grid .slider-item {
-      animation: gridEnter 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-    }
-
-    .longform-slider-wrapper.view-grid .slider-item:nth-child(1),
-    .shorts-slider-wrapper.view-grid .slider-item:nth-child(1) { animation-delay: 0ms; }
-    .longform-slider-wrapper.view-grid .slider-item:nth-child(2),
-    .shorts-slider-wrapper.view-grid .slider-item:nth-child(2) { animation-delay: 70ms; }
-    .longform-slider-wrapper.view-grid .slider-item:nth-child(3),
-    .shorts-slider-wrapper.view-grid .slider-item:nth-child(3) { animation-delay: 140ms; }
-    .longform-slider-wrapper.view-grid .slider-item:nth-child(4),
-    .shorts-slider-wrapper.view-grid .slider-item:nth-child(4) { animation-delay: 210ms; }
-    .longform-slider-wrapper.view-grid .slider-item:nth-child(5),
-    .shorts-slider-wrapper.view-grid .slider-item:nth-child(5) { animation-delay: 280ms; }
-
-    /* 슬라이더로 돌아갈 때 카드 모션 */
-    @keyframes sliderEnter {
-      0% {
-        opacity: 0;
-        transform: translateY(18px) scale(0.96);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      animation: gridEnter 0.6s var(--ease-smooth) both;
     }
 
     .longform-slider-wrapper.to-slider .slider-item,
     .shorts-slider-wrapper.to-slider .slider-item {
-      animation: sliderEnter 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+      animation: gridEnter 0.5s var(--ease-smooth) both;
     }
 
-    .longform-slider-wrapper.to-slider .slider-item:nth-child(1),
-    .shorts-slider-wrapper.to-slider .slider-item:nth-child(1) { animation-delay: 0ms; }
-    .longform-slider-wrapper.to-slider .slider-item:nth-child(2),
-    .shorts-slider-wrapper.to-slider .slider-item:nth-child(2) { animation-delay: 60ms; }
-    .longform-slider-wrapper.to-slider .slider-item:nth-child(3),
-    .shorts-slider-wrapper.to-slider .slider-item:nth-child(3) { animation-delay: 120ms; }
-    .longform-slider-wrapper.to-slider .slider-item:nth-child(4),
-    .shorts-slider-wrapper.to-slider .slider-item:nth-child(4) { animation-delay: 180ms; }
-    .longform-slider-wrapper.to-slider .slider-item:nth-child(5),
-    .shorts-slider-wrapper.to-slider .slider-item:nth-child(5) { animation-delay: 240ms; }
+    /* 스태거링 딜레이 */
+    .longform-slider-wrapper .slider-item:nth-child(1), .shorts-slider-wrapper .slider-item:nth-child(1) { animation-delay: 0ms; }
+    .longform-slider-wrapper .slider-item:nth-child(2), .shorts-slider-wrapper .slider-item:nth-child(2) { animation-delay: 50ms; }
+    .longform-slider-wrapper .slider-item:nth-child(3), .shorts-slider-wrapper .slider-item:nth-child(3) { animation-delay: 100ms; }
+    .longform-slider-wrapper .slider-item:nth-child(4), .shorts-slider-wrapper .slider-item:nth-child(4) { animation-delay: 150ms; }
+    .longform-slider-wrapper .slider-item:nth-child(5), .shorts-slider-wrapper .slider-item:nth-child(5) { animation-delay: 200ms; }
 
     @media (max-width: 768px) {
-      .longform-slider-wrapper.view-grid .longform-track {
-        grid-template-columns: 1fr;
-      }
-
-      .shorts-slider-wrapper.view-grid .shorts-track {
-        grid-template-columns: 315px;
-      }
-
-      section { padding: 60px 0; }
-      .career-card,
-      .video-wrapper { padding: 22px 18px 26px; }
+      .longform-slider-wrapper.view-grid .longform-track { grid-template-columns: 1fr; }
+      section { padding: 70px 0; }
+      .career-card, .video-wrapper { padding: 22px 20px; }
       .section-title { font-size: 22px; }
-
-      .slider-track {
-        margin: 0;
-        padding: 4px 0 18px;
-      }
-
-      .section-header {
-        align-items: flex-end;
-      }
+      
+      .hero-name { font-size: 42px; margin-bottom: 12px; }
+      .hero-name::after { width: 80px; bottom: -10px; }
+      
+      .slider-track { padding: 4px 0 24px; gap: 16px; }
     }
 
-    /* 카드 공통: 등장 + hover 스케일 */
-    .career-card,
-    .slider-item {
-      --offsetY: 0px;
-      --scaleBase: 1;
-      --hoverScale: 1;
+    /* 카드 등장 및 호버 애니메이션 통합 */
+    .career-card, .slider-item {
+      --offsetY: 20px;
+      --scaleBase: 0.98;
       opacity: 0;
-      transform: translateY(var(--offsetY))
-        scale(calc(var(--scaleBase) * var(--hoverScale)));
-      transition:
-        transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
-        opacity 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+      transform: translateY(var(--offsetY)) scale(var(--scaleBase));
+      transition: transform 0.5s var(--ease-smooth), opacity 0.5s ease-out;
       will-change: transform, opacity;
-    }
-
-    .career-card {
-      --offsetY: 18px;
-    }
-
-    .slider-item {
-      --offsetY: 18px;
-      --scaleBase: 0.96;
     }
 
     .career-card.visible-block,
@@ -691,64 +558,43 @@
       --scaleBase: 1;
     }
 
-    /* 데스크톱(호버 가능한 환경)에서만 살짝 확대 효과 적용 */
     @media (hover: hover) and (pointer: fine) {
-      .career-card:hover,
-      .slider-item:hover {
-        --hoverScale: 1.015;
+      .career-card:hover, .slider-item:hover {
+        transform: translateY(-6px) scale(1.015);
+        transition-duration: 0.4s;
       }
     }
 
-    .slider-item {
-      flex: 0 0 min(510px, 100% - 40px);
-    }
+    .slider-item { flex: 0 0 min(520px, 85vw); }
+    .shorts-item { flex: 0 0 min(320px, 75vw); }
 
-    .shorts-item {
-      flex: 0 0 min(315px, 100% - 40px);
-    }
-
-    .longform-slider-wrapper:not(.view-grid) .longform-track .slider-item {
-      flex: 0 0 calc((100% - 18px) / 2);
-      max-width: calc((100% - 18px) / 2);
-    }
-
-    /* 푸터 */
     .footer {
-      padding: 40px 0 28px;
+      padding: 60px 0 40px;
       background: transparent;
-      border-top: 1px solid rgba(148, 163, 184, 0.4);
+      border-top: 1px solid rgba(148, 163, 184, 0.3);
     }
-
-    .footer-inner {
-      text-align: center;
-      color: var(--muted-strong);
-      font-size: 12px;
-    }
-
+    .footer-inner { text-align: center; color: var(--muted-strong); font-size: 13px; }
     .footer-divider {
-      width: 80px;
-      height: 1px;
-      background: rgba(148, 163, 184, 0.45);
-      border-radius: 999px;
-      margin: 0 auto 14px;
-      opacity: 0.85;
+      width: 60px; height: 2px;
+      background: rgba(148, 163, 184, 0.4);
+      margin: 0 auto 20px;
+      border-radius: 10px;
     }
+    .footer-email a { font-weight: 500; color: var(--accent); transition: color 0.2s; }
+    .footer-email a:hover { color: #8b5cf6; text-decoration: underline; }
 
-    .footer-email {
-      opacity: 0.9;
-    }
   </style>
 </head>
 <body>
   <!-- 스크롤 그라데이션 레이어 -->
   <div class="scroll-gradient"></div>
 
-  <!-- liquid glass 배경 블롭 -->
+  <!-- 배경 블롭 (최적화됨) -->
   <div class="bg-orbit bg-orbit-1"></div>
   <div class="bg-orbit bg-orbit-2"></div>
   <div class="bg-orbit bg-orbit-3"></div>
 
-  <!-- 상단 작은 바 -->
+  <!-- 상단 바 -->
   <div class="top-bar">
     <div class="top-bar-inner">
       <div class="top-left">
@@ -965,7 +811,7 @@
     </div>
   </section>
 
-  <!-- 사용 가능한 툴 (경력 카드 스타일) -->
+  <!-- 사용 가능한 툴 -->
   <section class="tools-section" id="tools">
     <div class="container reveal">
       <h2 class="section-title">사용 가능한 툴</h2>
@@ -1002,275 +848,150 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const reveals = document.querySelectorAll(".reveal");
-      const scrollGradient = document.querySelector(".scroll-gradient");
       const isMobile = window.matchMedia("(max-width: 768px)").matches;
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      /* 한 번만 실행되는 reveal 애니메이션 */
+      // 1. Reveal Animation (Intersection Observer 최적화)
+      const reveals = document.querySelectorAll(".reveal");
+      
       if ("IntersectionObserver" in window && !prefersReducedMotion) {
-        const observer = new IntersectionObserver(
-          (entries, observerInstance) => {
+        const revealObserver = new IntersectionObserver(
+          (entries, observer) => {
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
                 entry.target.classList.add("visible");
-                observerInstance.unobserve(entry.target);
-              }
-            });
-          },
-          {
-            threshold: 0.18,
-            rootMargin: "0px 0px -10% 0px",
-          }
-        );
-
-        reveals.forEach((el) => observer.observe(el));
-      } else {
-        reveals.forEach((el) => el.classList.add("visible"));
-      }
-
-      /* 스크롤 진행도에 따라 그라데이션 opacity 조절 (모바일은 비활성) */
-      function setupScrollGradient() {
-        if (!scrollGradient) return;
-        if (isMobile) {
-          scrollGradient.style.opacity = "0";
-          return;
-        }
-
-        let ticking = false;
-
-        function update() {
-          const scrollY = window.scrollY || window.pageYOffset;
-          const docHeight = document.documentElement.scrollHeight;
-          const winHeight = window.innerHeight || document.documentElement.clientHeight;
-          const maxScroll = Math.max(docHeight - winHeight, 1);
-          const progress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
-
-          const opacity = Math.min(0.6, progress * 0.9);
-          scrollGradient.style.opacity = opacity.toFixed(3);
-
-          ticking = false;
-        }
-
-        window.addEventListener("scroll", () => {
-          if (!ticking) {
-            window.requestAnimationFrame(update);
-            ticking = true;
-          }
-        });
-
-        update();
-      }
-
-      setupScrollGradient();
-
-      /* ✅ 슬라이더 움직일 때 카드에 걸리던 모션(탱글/스케일/오프셋) 제거됨 */
-
-      /* 카드 pop-in */
-      const longformItems = document.querySelectorAll(".longform-track .slider-item");
-      const shortsItems = document.querySelectorAll(".shorts-track .slider-item");
-
-      if ("IntersectionObserver" in window && !isMobile && !prefersReducedMotion) {
-        const videoObserver = new IntersectionObserver(
-          (entries, observer) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                const el = entry.target;
-                const index = Number(el.dataset.index || 0);
-                const delay = index * 120;
-
-                el.style.transitionDelay = delay + "ms";
-                el.classList.add("video-visible");
-
-                setTimeout(() => {
-                  el.style.transitionDelay = "0ms";
-                }, delay + 400);
-
-                observer.unobserve(el);
-              }
-            });
-          },
-          {
-            threshold: 0.25,
-            rootMargin: "0px 0px -10% 0px",
-          }
-        );
-
-        longformItems.forEach((el, index) => {
-          if (index < 2) {
-            el.dataset.index = String(index);
-            videoObserver.observe(el);
-          } else {
-            el.classList.add("video-visible");
-          }
-        });
-
-        shortsItems.forEach((el, index) => {
-          if (index < 3) {
-            el.dataset.index = String(index);
-            videoObserver.observe(el);
-          } else {
-            el.classList.add("video-visible");
-          }
-        });
-      } else {
-        longformItems.forEach((el) => el.classList.add("video-visible"));
-        shortsItems.forEach((el) => el.classList.add("video-visible"));
-      }
-
-      /* 경력 카드, 툴 카드 등장 모션 (career-card 공통 사용) */
-      const blockCards = document.querySelectorAll(".career-card");
-      if ("IntersectionObserver" in window && !prefersReducedMotion) {
-        const blockObserver = new IntersectionObserver(
-          (entries, observer) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add("visible-block");
                 observer.unobserve(entry.target);
               }
             });
           },
-          {
-            threshold: 0.2,
-            rootMargin: "0px 0px -10% 0px",
-          }
+          { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
         );
-        blockCards.forEach((el) => blockObserver.observe(el));
+        reveals.forEach((el) => revealObserver.observe(el));
       } else {
-        blockCards.forEach((el) => el.classList.add("visible-block"));
+        reveals.forEach((el) => el.classList.add("visible"));
       }
 
-      /* 롱폼 전체 보기 토글 */
-      const longformWrapper = document.querySelector(".longform-slider-wrapper");
-      const longformToggleBtn = document.querySelector(".longform-view-toggle");
+      // 2. Scroll Gradient Logic (성능 최적화: 캐싱 사용)
+      const scrollGradient = document.querySelector(".scroll-gradient");
+      
+      if (scrollGradient && !isMobile) {
+        let maxScroll = document.body.scrollHeight - window.innerHeight;
+        let ticking = false;
 
-      if (longformWrapper && longformToggleBtn) {
+        // 리사이즈 시 maxScroll 재계산
+        window.addEventListener("resize", () => {
+          maxScroll = document.body.scrollHeight - window.innerHeight;
+        });
+
+        window.addEventListener("scroll", () => {
+          if (!ticking) {
+            window.requestAnimationFrame(() => {
+              const scrollY = window.scrollY || window.pageYOffset;
+              const progress = Math.min(scrollY / (maxScroll || 1), 1);
+              // opacity 계산 단순화
+              scrollGradient.style.opacity = (progress * 0.7).toFixed(2);
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }, { passive: true });
+      }
+
+      // 3. 비디오/카드 등장 애니메이션 (Staggered effect)
+      const itemsToAnimate = document.querySelectorAll(".slider-item, .career-card");
+      
+      if ("IntersectionObserver" in window && !prefersReducedMotion) {
+        const itemObserver = new IntersectionObserver(
+          (entries, observer) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const el = entry.target;
+                
+                // 순차적 등장을 위한 약간의 딜레이 적용
+                // (부모 내에서의 순서를 알 수 없으므로 딜레이는 CSS 기본값 혹은 간단히 처리)
+                el.classList.add("video-visible");
+                if(el.classList.contains('career-card')) {
+                   el.classList.add("visible-block");
+                }
+                
+                observer.unobserve(el);
+              }
+            });
+          },
+          { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }
+        );
+
+        itemsToAnimate.forEach((el) => itemObserver.observe(el));
+      } else {
+        itemsToAnimate.forEach((el) => {
+          el.classList.add("video-visible");
+          if(el.classList.contains('career-card')) el.classList.add("visible-block");
+        });
+      }
+
+      // 4. View Toggle Logic
+      function setupToggle(btnSelector, wrapperSelector, type) {
+        const btn = document.querySelector(btnSelector);
+        const wrapper = document.querySelector(wrapperSelector);
+        
+        if (!btn || !wrapper) return;
+
         let isGrid = false;
-
-        longformToggleBtn.addEventListener("click", () => {
+        btn.addEventListener("click", () => {
           isGrid = !isGrid;
-
+          
           if (isGrid) {
-            longformWrapper.classList.remove("to-slider");
-            longformWrapper.classList.add("view-grid");
-            longformToggleBtn.textContent = "슬라이더 보기";
+            wrapper.classList.remove("to-slider");
+            wrapper.classList.add("view-grid");
+            btn.textContent = "슬라이더 보기";
           } else {
-            longformWrapper.classList.remove("view-grid");
-            longformWrapper.classList.add("to-slider");
-            longformToggleBtn.textContent = "전체 보기";
-
+            wrapper.classList.remove("view-grid");
+            wrapper.classList.add("to-slider");
+            btn.textContent = "전체 보기";
+            
+            // 애니메이션 끝나면 클래스 정리
             setTimeout(() => {
-              longformWrapper.classList.remove("to-slider");
+              wrapper.classList.remove("to-slider");
             }, 600);
           }
         });
       }
 
-      /* 숏폼 전체 보기 토글 */
-      const shortsWrapper = document.querySelector(".shorts-slider-wrapper");
-      const shortsToggleBtn = document.querySelector(".shorts-view-toggle");
+      setupToggle(".longform-view-toggle", ".longform-slider-wrapper", "longform");
+      setupToggle(".shorts-view-toggle", ".shorts-slider-wrapper", "shorts");
 
-      if (shortsWrapper && shortsToggleBtn) {
-        let isShortsGrid = false;
-
-        shortsToggleBtn.addEventListener("click", () => {
-          isShortsGrid = !isShortsGrid;
-
-          if (isShortsGrid) {
-            shortsWrapper.classList.remove("to-slider");
-            shortsWrapper.classList.add("view-grid");
-            shortsToggleBtn.textContent = "슬라이더 보기";
-          } else {
-            shortsWrapper.classList.remove("view-grid");
-            shortsWrapper.classList.add("to-slider");
-            shortsToggleBtn.textContent = "전체 보기";
-
-            setTimeout(() => {
-              shortsWrapper.classList.remove("to-slider");
-            }, 600);
-          }
-        });
-      }
-
-      /* 상단 "롱폼 · 숏폼 보기" 버튼: 롱폼 ↔ 숏폼 번갈아 이동
-         - 롱폼 이동 시 섹션이 화면 중앙보다 살짝 위에 오도록 오프셋
-         - 이름 섹션 근처로 올라가면 순서 초기화(다음 클릭은 다시 롱폼부터)
-         - 자동 스크롤 중에는 초기화 로직이 작동하지 않도록 분리 */
+      // 5. Top Bar Navigation (Smooth Scroll)
       const topToggleLink = document.querySelector(".top-right a");
-      const longformSection = document.getElementById("longform");
-      const shortsSection = document.getElementById("shorts");
-      const heroSection = document.getElementById("top");
+      const longformSec = document.getElementById("longform");
+      const shortsSec = document.getElementById("shorts");
       const topBar = document.querySelector(".top-bar");
+      
+      let toggleState = 0; // 0: go longform, 1: go shorts
 
-      let toggleState = 0; // 0: 다음 클릭은 롱폼, 1: 다음 클릭은 숏폼
-      let isAutoScrolling = false;
-      let autoScrollTimeoutId = null;
+      if (topToggleLink && longformSec && shortsSec) {
+        topToggleLink.addEventListener("click", (e) => {
+          e.preventDefault();
+          const target = toggleState === 0 ? longformSec : shortsSec;
+          
+          // 오프셋 계산 (헤더 높이 + 여유분)
+          const headerHeight = topBar ? topBar.offsetHeight : 60;
+          const targetPos = target.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
 
-      function scrollToSection(section) {
-        if (!section) return;
-        const rect = section.getBoundingClientRect();
-        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-        const topBarHeight = topBar ? topBar.offsetHeight : 0;
-        const docHeight = document.documentElement.scrollHeight;
-        let targetY;
-
-        if (section.id === "longform") {
-          // 롱폼 섹션 중앙을 기준으로, 화면 중앙보다 살짝 '위'로 오도록
-          const sectionCenter = rect.top + currentScroll + rect.height / 2;
-          const extraOffset = 40; // 위로 살짝 올리기
-          targetY = sectionCenter - viewportHeight / 2 - topBarHeight / 2 + extraOffset;
-        } else {
-          // 다른 섹션은 상단이 헤더 아래에 오도록
-          targetY = rect.top + currentScroll - topBarHeight - 8;
-        }
-
-        const maxScroll = Math.max(docHeight - viewportHeight, 0);
-        targetY = Math.max(0, Math.min(targetY, maxScroll));
-
-        isAutoScrolling = true;
-        if (autoScrollTimeoutId) clearTimeout(autoScrollTimeoutId);
-        autoScrollTimeoutId = setTimeout(() => {
-          isAutoScrolling = false;
-        }, 800);
-
-        if (prefersReducedMotion) {
-          window.scrollTo(0, targetY);
-        } else {
           window.scrollTo({
-            top: targetY,
-            behavior: "smooth",
+            top: targetPos,
+            behavior: "smooth"
           });
-        }
-      }
 
-      if (topToggleLink && longformSection && shortsSection) {
-        topToggleLink.addEventListener("click", (event) => {
-          event.preventDefault();
-
-          const targetSection =
-            toggleState === 0 ? longformSection : shortsSection;
-
-          scrollToSection(targetSection);
-
-          // 클릭할 때마다 롱폼 ↔ 숏폼 순환
           toggleState = (toggleState + 1) % 2;
         });
       }
-
-      // 이름(HERO) 섹션 근처로 스크롤되면 버튼 순서 초기화(다음 클릭은 다시 롱폼부터)
-      if (heroSection) {
-        window.addEventListener("scroll", () => {
-          if (isAutoScrolling) return; // 자동 스크롤 중에는 초기화 금지
-
-          const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-          const heroHeight = heroSection.offsetHeight || window.innerHeight;
-          // 화면이 이름 섹션 상단 근처에 있을 때만 리셋
-          if (scrollY < heroHeight * 0.6) {
-            toggleState = 0;
-          }
-        });
-      }
+      
+      // 최상단으로 가면 토글 순서 리셋
+      window.addEventListener("scroll", () => {
+        if (window.scrollY < 200) {
+          toggleState = 0;
+        }
+      }, { passive: true });
     });
   </script>
 </body>
