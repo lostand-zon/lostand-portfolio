@@ -1,1017 +1,285 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>Lostand | Video Editor Portfolio</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Lostand · 유튜브 영상 편집자 포트폴리오" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lostand | Video Editor Portfolio</title>
 
-  <!-- 폰트 -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    :root {
-      --bg: #f7f7fb;
-      --bg-alt: #ffffff;
-      --accent: #a855ff;
-      --accent-soft: rgba(168, 85, 255, 0.35);
-      --text: #111827;
-      --muted: #9ca3af;
-      --muted-strong: #4b5563;
-      --border: rgba(148, 163, 184, 0.3);
-      
-      /* 최적화된 부드러운 이징 곡선 (Exponential Ease Out) */
-      --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-    }
+<style>
+/* Background - iOS Mesh Gradient Style */
+body {
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  color: #0F3338;
+  background-color: #F1EFE7;
+  background-image: 
+    radial-gradient(at 10% 0%, rgba(255, 255, 255, 0.9) 0px, transparent 50%),
+    radial-gradient(at 80% 10%, rgba(0, 180, 216, 0.25) 0px, transparent 50%),
+    radial-gradient(at 90% 90%, rgba(0, 92, 106, 0.15) 0px, transparent 50%),
+    radial-gradient(at 10% 90%, rgba(241, 239, 231, 0.8) 0px, transparent 50%);
+  background-attachment: fixed;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+/* Liquid Glass Utility */
+.glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+  border-top: 1px solid rgba(255, 255, 255, 0.9);
+  border-left: 1px solid rgba(255, 255, 255, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 28px;
+  box-shadow: 
+    0 12px 40px rgba(0, 92, 106, 0.06),
+    inset 0 4px 20px rgba(255, 255, 255, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset -5px -5px 15px rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+}
 
-    html { scroll-behavior: smooth; }
+/* Hover Lift */
+.hover-lift {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-10px);
+  box-shadow: 
+    0 20px 40px rgba(0, 92, 106, 0.12),
+    inset 0 6px 24px rgba(255, 255, 255, 0.6);
+}
 
-    body {
-      font-family: "Pretendard", system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
-      background: linear-gradient(
-        to bottom,
-        #fdfdfd 0%,
-        #f7f7fb 45%,
-        #f3f4f6 100%
-      );
-      color: var(--text);
-      -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
-    }
+/* Reveal Animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.reveal.active { opacity: 1; transform: translateY(0); }
 
-    a { color: inherit; text-decoration: none; }
+/* Layout & Typography */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+section { padding: 90px 0; }
+h2 { font-size: 36px; font-weight: 700; margin-bottom: 16px; text-align: center; letter-spacing: -0.5px; }
+.section-desc { text-align: center; font-size: 18px; color: #2E5358; margin-bottom: 50px; font-weight: 500; }
 
-    .container {
-      width: 100%;
-      max-width: 1040px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
+/* HERO */
+.hero { text-align: center; padding: 160px 0 100px; }
+.hero h1 { 
+  font-size: 72px; font-weight: 700; letter-spacing: -2px; margin-bottom: 20px;
+  background: linear-gradient(135deg, #052428 0%, #005C6A 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+}
+.hero p { color: #2E5358; font-size: 24px; font-weight: 400; letter-spacing: -0.3px; }
 
-    #longform .container {
-      max-width: 1200px;
-    }
+/* METRICS */
+.metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; text-align: center; }
+.metric { padding: 45px 20px; }
+.metric-number { font-size: 40px; font-weight: 700; color: #005C6A; margin-bottom: 8px; letter-spacing: -1px; }
+.metric-label { font-size: 16px; color: #2E5358; font-weight: 500; }
 
-    /* 스크롤 그라데이션 레이어 - will-change로 최적화 */
-    .scroll-gradient {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: -2;
-      background: linear-gradient(
-        180deg,
-        rgba(129, 212, 250, 0.00) 0%,
-        rgba(129, 212, 250, 0.26) 25%,
-        rgba(179, 157, 219, 0.32) 55%,
-        rgba(244, 143, 177, 0.30) 100%
-      );
-      opacity: 0;
-      transition: opacity 0.3s linear;
-      will-change: opacity;
-    }
+/* PHILOSOPHY (NEWLY REPLACED) */
+.philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.phil-card { padding: 50px 30px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.phil-icon { font-size: 44px; margin-bottom: 20px; filter: drop-shadow(0 4px 10px rgba(0, 92, 106, 0.1)); }
+.phil-card h3 { font-size: 22px; font-weight: 700; color: #0F3338; margin-bottom: 15px; letter-spacing: -0.5px; }
+.phil-card p { font-size: 16px; color: #2E5358; line-height: 1.6; word-break: keep-all; margin: 0; }
 
-    /* 배경 블롭 최적화 */
-    .bg-orbit {
-      position: fixed;
-      border-radius: 50%; /* 999px 대신 50% 사용 (렌더링 미세 최적화) */
-      filter: blur(50px); /* 블러 값 증가로 더 부드럽게 */
-      opacity: 0.22;
-      mix-blend-mode: screen;
-      pointer-events: none;
-      z-index: -1;
-      transform-origin: center;
-      /* 하드웨어 가속 강제 */
-      will-change: transform;
-      transform: translate3d(0,0,0); 
-      animation: floatBlob 20s ease-in-out infinite alternate;
-    }
+/* VIDEO GRID */
+.video-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+.video-frame { padding: 10px; border-radius: 28px; }
+.video-inner { width: 100%; height: 100%; aspect-ratio: 16/9; border-radius: 18px; overflow: hidden; background: #000; }
+iframe { width: 100%; height: 100%; border: 0; display: block; }
 
-    .bg-orbit-1 {
-      width: 420px;
-      height: 420px;
-      top: -80px;
-      left: -120px;
-      background: radial-gradient(circle at 30% 30%, #38bdf8, transparent 60%);
-    }
+/* STYLE GRID */
+.style-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+.style-item { padding: 45px 30px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.style-emoji { font-size: 40px; margin-bottom: 15px; filter: drop-shadow(0 4px 10px rgba(0, 92, 106, 0.1)); }
+.style-text { font-size: 20px; font-weight: 700; color: #0F3338; word-break: keep-all; line-height: 1.4; }
+.style-sub { font-size: 15px; font-weight: 500; color: #2E5358; display: block; margin-top: 8px; }
 
-    .bg-orbit-2 {
-      width: 420px;
-      height: 420px;
-      bottom: -120px;
-      right: -140px;
-      background: radial-gradient(circle at 70% 40%, #a855ff, transparent 60%);
-      animation-delay: -5s; /* 음수 딜레이로 처음부터 움직이는 것처럼 */
-    }
+/* EXPERIENCE */
+.info-card { padding: 60px; text-align: center; max-width: 800px; margin: 0 auto; }
+.exp-text { font-size: 18px; line-height: 2; color: #0F3338; font-weight: 500; }
 
-    .bg-orbit-3 {
-      width: 320px;
-      height: 320px;
-      top: 40%;
-      left: 55%;
-      background: radial-gradient(circle at 50% 50%, #22c55e, transparent 65%);
-      opacity: 0.2;
-      animation-delay: -10s;
-    }
+/* CTA */
+.cta { text-align: center; padding-bottom: 120px; }
+.cta-card { padding: 70px 20px; max-width: 800px; margin: 0 auto; }
+.cta h2 { margin-bottom: 16px; }
+.cta p { color: #2E5358; font-size: 20px; margin-bottom: 45px; }
+.cta a {
+  display: inline-block; padding: 20px 48px; border-radius: 999px; background: rgba(255, 255, 255, 0.4);
+  color: #0F3338; font-size: 19px; font-weight: 600; text-decoration: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.9); border-left: 1px solid rgba(255, 255, 255, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2); border-right: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px) saturate(200%); -webkit-backdrop-filter: blur(20px) saturate(200%);
+  box-shadow: 0 8px 24px rgba(0, 92, 106, 0.08), inset 0 2px 10px rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+}
+.cta a:hover { background: #005C6A; color: #fff; border-color: #005C6A; transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0, 92, 106, 0.3); }
 
-    @keyframes floatBlob {
-      0% { transform: translate3d(0, 0, 0) scale(1); }
-      50% { transform: translate3d(30px, -20px, 0) scale(1.06); }
-      100% { transform: translate3d(-20px, 26px, 0) scale(1.03); }
-    }
-
-    @keyframes glassFlow {
-      0% {
-        transform: translate3d(-14px, -8px, 0);
-        opacity: 0.6;
-      }
-      50% {
-        transform: translate3d(4px, 6px, 0);
-        opacity: 0.75;
-      }
-      100% {
-        transform: translate3d(10px, 2px, 0);
-        opacity: 0.6;
-      }
-    }
-
-    section { padding: 100px 0; } /* 여백 살짝 증가로 시원한 느낌 */
-
-    .section-title {
-      font-size: 26px;
-      font-weight: 600;
-      letter-spacing: -0.04em;
-      margin-bottom: 12px;
-    }
-
-    .section-sub {
-      font-size: 14px;
-      color: var(--muted-strong);
-      margin-bottom: 24px;
-      line-height: 1.6;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-
-    .view-toggle-btn {
-      padding: 7px 16px;
-      font-size: 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      background: radial-gradient(
-        circle at top left,
-        rgba(248, 250, 252, 0.95),
-        rgba(241, 245, 249, 0.95)
-      );
-      color: var(--muted-strong);
-      cursor: pointer;
-      white-space: nowrap;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
-      transition: all 0.3s var(--ease-smooth);
-    }
-
-    .view-toggle-btn:hover {
-      transform: translateY(-2px);
-      border-color: rgba(148, 163, 184, 0.9);
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
-    }
-
-    .view-toggle-btn:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
-    }
-
-    /* REVEAL 애니메이션 최적화 */
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 1s var(--ease-smooth), transform 1s var(--ease-smooth);
-      will-change: opacity, transform;
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* HERO */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      position: relative;
-    }
-
-    .hero-inner {
-      padding: 40px 20px;
-      max-width: 640px;
-      margin: 0 auto;
-    }
-
-    .hero-name {
-      position: relative;
-      font-size: clamp(48px, 11vw, 80px);
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-      text-shadow: 0 0 20px rgba(148, 163, 184, 0.3);
-      background: linear-gradient(135deg, #111827 30%, #4b5563 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: inline-block;
-    }
-
-    .hero-name::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: -14px;
-      width: 110px;
-      height: 3px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #22d3ee, #a855ff);
-      box-shadow: 0 2px 12px rgba(168, 85, 255, 0.4);
-    }
-
-    .hero-tagline {
-      margin-top: 30px;
-      font-size: 16px;
-      color: var(--muted-strong);
-      position: relative;
-      z-index: 1;
-      opacity: 0.9;
-    }
-
-    .career-section,
-    .video-section,
-    .tools-section {
-      background: transparent;
-      border-top: 1px solid rgba(148, 163, 184, 0.15);
-      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
-    }
-
-    /* Glass Card 최적화 */
-    .glass-card {
-      position: relative;
-      overflow: hidden;
-      border-radius: 26px;
-      background: linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.4),
-        rgba(255, 255, 255, 0.1)
-      );
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      box-shadow: 
-        0 20px 50px rgba(15, 23, 42, 0.1),
-        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      transform-style: preserve-3d;
-      backface-visibility: hidden; /* 깜빡임 방지 */
-    }
-
-    /* before 가상요소 애니메이션 성능 개선 */
-    .glass-card::before {
-      content: "";
-      position: absolute;
-      inset: -50%; /* 여유 공간 확보 */
-      background:
-        radial-gradient(ellipse at 50% -10%, rgba(255, 255, 255, 0.8), transparent 60%),
-        radial-gradient(circle at 110% 10%, rgba(129, 212, 250, 0.15), transparent 60%),
-        radial-gradient(circle at -10% 110%, rgba(179, 157, 219, 0.15), transparent 60%);
-      opacity: 0.6;
-      mix-blend-mode: overlay;
-      pointer-events: none;
-      will-change: transform; /* 성능 최적화 핵심 */
-      animation: glassFlow 25s ease-in-out infinite alternate;
-    }
-
-    .glass-card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      background: linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, transparent 100%);
-      mask-image: linear-gradient(to bottom, black, transparent); 
-      -webkit-mask-image: linear-gradient(to bottom, black, transparent);
-      pointer-events: none;
-    }
-
-    .glass-card:hover {
-      --hoverScale: 1.02;
-      box-shadow: 
-        0 30px 60px rgba(15, 23, 42, 0.15),
-        0 0 0 1px rgba(255, 255, 255, 0.4) inset;
-    }
-
-    .career-card { padding: 28px 26px; }
-
-    .career-list {
-      list-style: none;
-      font-size: 15px;
-      color: var(--text);
-      position: relative;
-      z-index: 1;
-    }
-
-    .career-item {
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-    }
-    .career-item:last-child { border-bottom: none; }
-
-    .career-label {
-      font-size: 13px;
-      color: var(--muted-strong);
-      margin-bottom: 6px;
-      font-weight: 500;
-    }
-    .career-text { font-size: 16px; font-weight: 400; }
-
-    .video-wrapper { padding: 20px; }
-    .video-caption { position: relative; z-index: 1; }
-
-    .video-frame {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border-radius: 16px;
-      overflow: hidden;
-      background: #f1f5f9; /* 로딩 전 배경색 */
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
-      isolation: isolate;
-      transform: translateZ(0); /* 둥근 모서리 마스킹 최적화 */
-    }
-
-    .video-frame-vertical {
-      aspect-ratio: 9 / 16;
-      max-width: 360px;
-      margin: 0 auto;
-    }
-
-    .video-frame iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-      position: relative;
-      z-index: 2;
-    }
-
-    .video-caption {
-      font-size: 13px;
-      color: var(--muted-strong);
-      margin-top: 14px;
-      line-height: 1.5;
-    }
-
-    /* 상단 바 */
-    .top-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      z-index: 30;
-      pointer-events: none;
-      background: linear-gradient(to bottom, rgba(253, 253, 253, 0.8) 0%, transparent 100%);
-    }
-
-    .top-bar-inner {
-      width: 100%;
-      max-width: 1040px;
-      margin: 0 auto;
-      padding: 0 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      pointer-events: auto;
-    }
-
-    .top-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-    }
-
-    .top-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
-    }
-
-    .top-right a {
-      padding: 8px 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      background: rgba(255, 255, 255, 0.85);
-      font-size: 12px;
-      font-weight: 500;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
-      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-    }
-    .top-right a:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
-    }
-
-    /* 슬라이더 */
-    .slider-wrapper {
-      position: relative;
-      margin-top: 20px;
-    }
-
-    .slider-track {
-      display: flex;
-      gap: 24px;
-      overflow-x: auto;
-      padding: 10px 4px 30px; /* 그림자 잘림 방지용 패딩 */
-      scroll-behavior: smooth;
-      margin: 0 -4px;
-    }
-
-    .slider-track::-webkit-scrollbar { height: 8px; }
-    .slider-track::-webkit-scrollbar-track {
-      background: transparent;
-      margin: 0 20px;
-    }
-    .slider-track::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.3);
-      border-radius: 10px;
-      transition: background 0.3s;
-    }
-    .slider-track::-webkit-scrollbar-thumb:hover {
-      background: rgba(148, 163, 184, 0.6);
-    }
-
-    /* 롱폼 그리드 뷰 */
-    .longform-slider-wrapper.view-grid .longform-track {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-      overflow: visible;
-      padding-bottom: 10px;
-    }
-    .longform-slider-wrapper.view-grid .slider-item {
-      flex: 0 0 auto;
-      width: 100%;
-    }
-
-    /* 숏폼 그리드 뷰 */
-    .shorts-slider-wrapper.view-grid .shorts-track {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      justify-content: center;
-      gap: 24px;
-      overflow: visible;
-      padding-bottom: 10px;
-    }
-    .shorts-slider-wrapper.view-grid .slider-item {
-      flex: 0 0 auto;
-      width: 100%;
-      max-width: 340px;
-      margin: 0 auto;
-    }
-
-    /* Grid/Slider 전환 애니메이션 - 부드러운 곡선 적용 */
-    @keyframes gridEnter {
-      0% { opacity: 0; transform: translateY(20px) scale(0.98); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .longform-slider-wrapper.view-grid .slider-item,
-    .shorts-slider-wrapper.view-grid .slider-item {
-      animation: gridEnter 0.6s var(--ease-smooth) both;
-    }
-
-    .longform-slider-wrapper.to-slider .slider-item,
-    .shorts-slider-wrapper.to-slider .slider-item {
-      animation: gridEnter 0.5s var(--ease-smooth) both;
-    }
-
-    /* 스태거링 딜레이 */
-    .longform-slider-wrapper .slider-item:nth-child(1), .shorts-slider-wrapper .slider-item:nth-child(1) { animation-delay: 0ms; }
-    .longform-slider-wrapper .slider-item:nth-child(2), .shorts-slider-wrapper .slider-item:nth-child(2) { animation-delay: 50ms; }
-    .longform-slider-wrapper .slider-item:nth-child(3), .shorts-slider-wrapper .slider-item:nth-child(3) { animation-delay: 100ms; }
-    .longform-slider-wrapper .slider-item:nth-child(4), .shorts-slider-wrapper .slider-item:nth-child(4) { animation-delay: 150ms; }
-    .longform-slider-wrapper .slider-item:nth-child(5), .shorts-slider-wrapper .slider-item:nth-child(5) { animation-delay: 200ms; }
-
-    @media (max-width: 768px) {
-      .longform-slider-wrapper.view-grid .longform-track { grid-template-columns: 1fr; }
-      section { padding: 70px 0; }
-      .career-card, .video-wrapper { padding: 22px 20px; }
-      .section-title { font-size: 22px; }
-      
-      .hero-name { font-size: 42px; margin-bottom: 12px; }
-      .hero-name::after { width: 80px; bottom: -10px; }
-      
-      .slider-track { padding: 4px 0 24px; gap: 16px; }
-    }
-
-    /* 카드 등장 및 호버 애니메이션 통합 */
-    .career-card, .slider-item {
-      --offsetY: 20px;
-      --scaleBase: 0.98;
-      opacity: 0;
-      transform: translateY(var(--offsetY)) scale(var(--scaleBase));
-      transition: transform 0.5s var(--ease-smooth), opacity 0.5s ease-out;
-      will-change: transform, opacity;
-    }
-
-    .career-card.visible-block,
-    .slider-item.video-visible {
-      opacity: 1;
-      --offsetY: 0px;
-      --scaleBase: 1;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .career-card:hover, .slider-item:hover {
-        transform: translateY(-6px) scale(1.015);
-        transition-duration: 0.4s;
-      }
-    }
-
-    .slider-item { flex: 0 0 min(520px, 85vw); }
-    .shorts-item { flex: 0 0 min(320px, 75vw); }
-
-    .footer {
-      padding: 60px 0 40px;
-      background: transparent;
-      border-top: 1px solid rgba(148, 163, 184, 0.3);
-    }
-    .footer-inner { text-align: center; color: var(--muted-strong); font-size: 13px; }
-    .footer-divider {
-      width: 60px; height: 2px;
-      background: rgba(148, 163, 184, 0.4);
-      margin: 0 auto 20px;
-      border-radius: 10px;
-    }
-    .footer-email a { font-weight: 500; color: var(--accent); transition: color 0.2s; }
-    .footer-email a:hover { color: #8b5cf6; text-decoration: underline; }
-
-  </style>
+/* MOBILE */
+@media(max-width:768px){
+  section { padding: 60px 0; }
+  .hero h1 { font-size: 46px; }
+  .metrics-grid, .video-grid, .style-grid, .philosophy-grid { grid-template-columns: 1fr; gap: 20px; }
+  .hover-lift:hover { transform: none; }
+}
+</style>
 </head>
+
 <body>
-  <!-- 스크롤 그라데이션 레이어 -->
-  <div class="scroll-gradient"></div>
 
-  <!-- 배경 블롭 (최적화됨) -->
-  <div class="bg-orbit bg-orbit-1"></div>
-  <div class="bg-orbit bg-orbit-2"></div>
-  <div class="bg-orbit bg-orbit-3"></div>
+<section class="hero reveal">
+  <div class="container">
+    <h1>Lostand</h1>
+    <p>시청 지속률과 몰입도를 설계하는 영상 편집자</p>
+  </div>
+</section>
 
-  <!-- 상단 바 -->
-  <div class="top-bar">
-    <div class="top-bar-inner">
-      <div class="top-left">
-        <div class="top-dot"></div>
-        <span>Lostand · Video Editor</span>
+<section class="reveal">
+  <div class="container">
+    <h2>채널 성장 지표</h2>
+    <p class="section-desc">데이터로 증명하는 편집의 가치</p>
+    <div class="metrics-grid">
+      <div class="metric glass hover-lift">
+        <div class="metric-number">43만+</div>
+        <div class="metric-label">채널 편집 참여</div>
       </div>
-      <div class="top-right">
-        <a href="#longform">롱폼 · 숏폼 보기</a>
+      <div class="metric glass hover-lift">
+        <div class="metric-number">Retention ↑</div>
+        <div class="metric-label">시청 지속률 개선</div>
+      </div>
+      <div class="metric glass hover-lift">
+        <div class="metric-number">CTR 개선</div>
+        <div class="metric-label">클릭률 향상</div>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- HERO -->
-  <section class="hero" id="top">
-    <div class="hero-inner reveal">
-      <h1 class="hero-name">Lostand</h1>
-      <p class="hero-tagline">시청 지속률과 몰입도를 설계하는 영상 편집자</p>
+<section class="reveal">
+  <div class="container">
+    <h2>편집 철학</h2>
+    <p class="section-desc">단순한 컷편집을 넘어, 시청자의 심리를 설계합니다</p>
+    <div class="philosophy-grid">
+      <div class="phil-card glass hover-lift">
+        <div class="phil-icon">🧠</div>
+        <h3>리텐션 최적화</h3>
+        <p>초반 5초의 몰입도를 극대화하고, 이탈 구간을 미리 예측하여 시각적 자극과 템포를 조율합니다.</p>
+      </div>
+      <div class="phil-card glass hover-lift">
+        <div class="phil-icon">🎭</div>
+        <h3>페르소나 동기화</h3>
+        <p>크리에이터의 화법과 채널의 고유한 캐릭터를 완벽히 분석하여, 이질감 없는 자막과 효과를 입힙니다.</p>
+      </div>
+      <div class="phil-card glass hover-lift">
+        <div class="phil-icon">⏱️</div>
+        <h3>알고리즘 친화적 호흡</h3>
+        <p>플랫폼의 시청 지속률 알고리즘을 고려하여, 지루할 틈 없는 최적의 러닝타임과 구조를 도출해 냅니다.</p>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- 경력 사항 -->
-  <section class="career-section" id="career">
-    <div class="container reveal">
-      <h2 class="section-title">경력 사항</h2>
-      <p class="section-sub">
-        유튜브 영상 편집을 중심으로 활동 중입니다.<br />
+<section class="reveal">
+  <div class="container">
+    <h2>대표 작업</h2>
+    <p class="section-desc">채널의 성격을 완벽히 이해한 맞춤형 편집</p>
+    <div class="video-grid">
+      <div class="video-frame glass hover-lift"><div class="video-inner"><iframe src="https://www.youtube.com/embed/RStL7ZQ06W8"></iframe></div></div>
+      <div class="video-frame glass hover-lift"><div class="video-inner"><iframe src="https://www.youtube.com/embed/jCrx2Gf7TMI"></iframe></div></div>
+      <div class="video-frame glass hover-lift"><div class="video-inner"><iframe src="https://www.youtube.com/embed/vX5HMAuQDAw"></iframe></div></div>
+      <div class="video-frame glass hover-lift"><div class="video-inner"><iframe src="https://www.youtube.com/embed/vnyJfObJ-zM"></iframe></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <h2>나만의 디테일</h2>
+    <p class="section-desc">결과물의 차이를 만드는 편집 철학</p>
+    <div class="style-grid">
+      <div class="style-item glass hover-lift">
+        <div class="style-emoji">📖</div>
+        <div class="style-text">완벽한 맞춤법과 띄어쓰기<span class="style-sub">사전적 기준에 맞춘 정확한 자막으로 채널 신뢰도 상승</span></div>
+      </div>
+      <div class="style-item glass hover-lift">
+        <div class="style-emoji">✂️</div>
+        <div class="style-text">치밀한 템포 유지<span class="style-sub">불필요한 구간 제거 및 자막 타이밍 기반 리듬 강화</span></div>
+      </div>
+      <div class="style-item glass hover-lift">
+        <div class="style-emoji">📈</div>
+        <div class="style-text">이탈 방지 컷 구성<span class="style-sub">시청자의 시선이 머물도록 설계된 심리적 흐름 통제</span></div>
+      </div>
+      <div class="style-item glass hover-lift">
+        <div class="style-emoji">🏗️</div>
+        <div class="style-text">기승전결 구조 설계<span class="style-sub">콘텐츠의 핵심 재미를 극대화하는 탄탄한 스토리보드</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <h2>전체 작업</h2>
+    <div class="video-grid">
+      <div class="video-frame glass hover-lift"><div class="video-inner"><iframe src="https://www.youtube.com/embed/RStL7ZQ06W8"></iframe></div></div>
+      <div class="video-frame glass hover-lift"><div class="video-inner"><iframe src="https://www.youtube.com/embed/jCrx2Gf7TMI"></iframe></div></div>
+      <div class="video-frame glass hover-lift"><div class="video-inner"><iframe src="https://www.youtube.com/embed/vX5HMAuQDAw"></iframe></div></div>
+      <div class="video-frame glass hover-lift"><div class="video-inner"><iframe src="https://www.youtube.com/embed/vnyJfObJ-zM"></iframe></div></div>
+      <div class="video-frame glass hover-lift"><div class="video-inner"><iframe src="https://www.youtube.com/embed/0kCnnViKokQ"></iframe></div></div>
+      <div class="video-frame glass hover-lift"><div class="video-inner"><iframe src="https://www.youtube.com/embed/65RWYr88qDA"></iframe></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="container">
+    <h2>경력</h2>
+    <div class="info-card glass hover-lift">
+      <p class="exp-text">
+        3만 빙밍 유튜브 편집자 (2025.01.17 ~2026.04.20)<br><br>
+        43만 왈도쿤 유튜브 편집자 (2026.01.20 ~)
       </p>
-
-      <div class="career-card glass-card">
-        <ul class="career-list">
-          <li class="career-item">
-            <div class="career-label">현재</div>
-            <div class="career-text">
-              3만 빙밍 유튜브 편집자 (2025.01.17 ~) - 편집<br /><br />
-	      43만 왈도쿤 유튜브 편집자 (2026.01.20 ~) - 편집
-	    </div>
-          </li>
-        </ul>
-      </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- 롱폼 영상 -->
-  <section class="video-section" id="longform">
-    <div class="container reveal">
-      <div class="section-header">
-        <h2 class="section-title">롱폼 영상</h2>
-        <button type="button" class="view-toggle-btn longform-view-toggle">전체 보기</button>
-      </div>
-      <p class="section-sub">
-        편집 스타일, 흐름, 리듬을 가장 잘 보여줄 수 있는 긴 호흡의 콘텐츠를 모아두는 공간입니다.
-      </p>
-
-      <div class="slider-wrapper longform-slider-wrapper">
-        <div class="slider-track longform-track">
-          <!-- 롱폼 1 -->
-          <div class="video-wrapper glass-card slider-item">
-            <div class="video-frame">
-              <iframe
-                src="https://www.youtube.com/embed/RStL7ZQ06W8"
-                title="Lostand Long-form Video 1"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-              ></iframe>
-            </div>
-            <p class="video-caption">
-              · 롱폼 영상 1 게임 및 저스트 채팅 <br />
-              · “[빙밍] 메인 콘텐츠 편집본 · 컷 편집·자막·사운드 디자인 전체 진행”
-            </p>
-          </div>
-
-          <!-- 롱폼 2 -->
-          <div class="video-wrapper glass-card slider-item">
-            <div class="video-frame">
-              <iframe
-                src="https://www.youtube.com/embed/jCrx2Gf7TMI"
-                title="Lostand Long-form Video 2"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-              ></iframe>
-            </div>
-            <p class="video-caption">
-              · 롱폼 영상 2 VR 컨텐츠 <br />
-              · “[빙밍] 메인 콘텐츠 편집본 · 컷 편집·자막·사운드 디자인 전체 진행”
-            </p>
-          </div>
-
-          <!-- 롱폼 3 -->
-          <div class="video-wrapper glass-card slider-item">
-            <div class="video-frame">
-              <iframe
-                src="https://www.youtube.com/embed/vX5HMAuQDAw"
-                title="Lostand Long-form Video 3"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-              ></iframe>
-            </div>
-            <p class="video-caption">
-              · 롱폼 영상 3 저챗 콘텐츠 <br />
-              · "[왈도쿤] 메인 콘텐츠 편집본 · 컷 편집·자막·사운드 디자인 전체 진행"
-            </p>
-          </div>
- 	  
-	  <!-- 롱폼 4 -->
-          <div class="video-wrapper glass-card slider-item">
-            <div class="video-frame">
-              <iframe
-                src="https://www.youtube.com/embed/vnyJfObJ-zM"
-                title="Lostand Long-form Video 4"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-              ></iframe>
-            </div>
-            <p class="video-caption">
-              · 롱폼 영상 4 게임 <br />
-              · “[왈도쿤] 메인 콘텐츠 편집본 · 컷 편집·자막·사운드 디자인 전체 진행”
-            </p>
-          </div>
-
-          <!-- 롱폼 5 -->
-          <div class="video-wrapper glass-card slider-item">
-            <div class="video-frame">
-              <iframe
-                src="https://www.youtube.com/embed/0kCnnViKokQ"
-                title="Lostand Long-form Video 4"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-              ></iframe>
-            </div>
-            <p class="video-caption">
-              · 롱폼 영상 4 VR 컨텐츠 <br />
-              · “[빙밍] 메인 콘텐츠 편집본 · 컷 편집·자막·사운드 디자인 전체 진행”
-            </p>
-          </div>
-
-          <!-- 롱폼 6 -->
-          <div class="video-wrapper glass-card slider-item">
-            <div class="video-frame">
-              <iframe
-                src="https://www.youtube.com/embed/65RWYr88qDA"
-                title="Lostand Long-form Video 5"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-              ></iframe>
-            </div>
-            <p class="video-caption">
-              · 롱폼 영상 5 게임 <br />
-              · “[빙밍] 메인 콘텐츠 편집본 · 컷 편집·자막·사운드 디자인 전체 진행”
-            </p>
-          </div>
-        </div>
-      </div>
+<section class="cta reveal">
+  <div class="container">
+    <div class="cta-card glass hover-lift">
+      <h2>영상 퀄리티를 올리고 싶다면</h2>
+      <p>편집 방향부터 결과까지 함께 설계합니다</p>
+      <a href="mailto:lostand26@gmail.com">작업 문의하기</a>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- 숏폼 -->
-  <section class="video-section" id="shorts">
-    <div class="container reveal">
-      <div class="section-header">
-        <h2 class="section-title">숏폼 영상</h2>
-        <button type="button" class="view-toggle-btn shorts-view-toggle">전체 보기</button>
-      </div>
-      <p class="section-sub">
-        짧은 길이의 숏폼 영상을 따로 모아, 좌우로 스크롤하면서 볼 수 있는 섹션입니다.
-      </p>
-
-      <div class="slider-wrapper shorts-slider-wrapper">
-        <div class="slider-track shorts-track">
-          <!-- 숏폼 1 -->
-          <div class="video-wrapper glass-card slider-item shorts-item">
-            <div class="video-frame video-frame-vertical">
-              <iframe
-                src="https://www.youtube.com/embed/w85KFHJe4gc"
-                title="Lostand Shorts Video 1"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-              ></iframe>
-            </div>
-            <p class="video-caption">
-              · 숏폼 영상 1 <br />
-            </p>
-          </div>
-
-          <!-- 숏폼 2 -->
-          <div class="video-wrapper glass-card slider-item shorts-item">
-            <div class="video-frame video-frame-vertical">
-              <iframe
-                src="https://www.youtube.com/embed/HKIBvkfPRjc"
-                title="Lostand Shorts Video 2"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-              ></iframe>
-            </div>
-            <p class="video-caption">
-              · 숏폼 영상 2 <br />
-            </p>
-          </div>
-
-          <!-- 숏폼 3 -->
-          <div class="video-wrapper glass-card slider-item shorts-item">
-            <div class="video-frame video-frame-vertical">
-              <iframe
-                src="https://www.youtube.com/embed/B8UJgzyDujA"
-                title="Lostand Shorts Video 3"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-              ></iframe>
-            </div>
-            <p class="video-caption">
-              · 숏폼 영상 3 <br />
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 사용 가능한 툴 -->
-  <section class="tools-section" id="tools">
-    <div class="container reveal">
-      <h2 class="section-title">사용 가능한 툴</h2>
-      <p class="section-sub">
-        주로 사용하는 편집 툴과 숙련도를 정리했습니다.
-      </p>
-
-      <div class="career-card glass-card">
-        <ul class="career-list">
-          <li class="career-item">
-            <div class="career-label">편집</div>
-            <div class="career-text">프리미어 프로 · 상</div>
-          </li>
-          <li class="career-item">
-            <div class="career-label">모션 그래픽</div>
-            <div class="career-text">에프터이펙트 · 하</div>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- 페이지 끝 · 이메일 -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-inner">
-        <div class="footer-divider"></div>
-        <p class="footer-email">
-          이메일 주소 - <a href="mailto:lostand26@gmail.com">lostand26@gmail.com</a>
-        </p>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const isMobile = window.matchMedia("(max-width: 768px)").matches;
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      // 1. Reveal Animation (Intersection Observer 최적화)
-      const reveals = document.querySelectorAll(".reveal");
-      
-      if ("IntersectionObserver" in window && !prefersReducedMotion) {
-        const revealObserver = new IntersectionObserver(
-          (entries, observer) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add("visible");
-                observer.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
-        );
-        reveals.forEach((el) => revealObserver.observe(el));
-      } else {
-        reveals.forEach((el) => el.classList.add("visible"));
-      }
-
-      // 2. Scroll Gradient Logic (성능 최적화: 캐싱 사용)
-      const scrollGradient = document.querySelector(".scroll-gradient");
-      
-      if (scrollGradient && !isMobile) {
-        let maxScroll = document.body.scrollHeight - window.innerHeight;
-        let ticking = false;
-
-        // 리사이즈 시 maxScroll 재계산
-        window.addEventListener("resize", () => {
-          maxScroll = document.body.scrollHeight - window.innerHeight;
-        });
-
-        window.addEventListener("scroll", () => {
-          if (!ticking) {
-            window.requestAnimationFrame(() => {
-              const scrollY = window.scrollY || window.pageYOffset;
-              const progress = Math.min(scrollY / (maxScroll || 1), 1);
-              // opacity 계산 단순화
-              scrollGradient.style.opacity = (progress * 0.7).toFixed(2);
-              ticking = false;
-            });
-            ticking = true;
-          }
-        }, { passive: true });
-      }
-
-      // 3. 비디오/카드 등장 애니메이션 (Staggered effect)
-      const itemsToAnimate = document.querySelectorAll(".slider-item, .career-card");
-      
-      if ("IntersectionObserver" in window && !prefersReducedMotion) {
-        const itemObserver = new IntersectionObserver(
-          (entries, observer) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                const el = entry.target;
-                
-                // 순차적 등장을 위한 약간의 딜레이 적용
-                // (부모 내에서의 순서를 알 수 없으므로 딜레이는 CSS 기본값 혹은 간단히 처리)
-                el.classList.add("video-visible");
-                if(el.classList.contains('career-card')) {
-                   el.classList.add("visible-block");
-                }
-                
-                observer.unobserve(el);
-              }
-            });
-          },
-          { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }
-        );
-
-        itemsToAnimate.forEach((el) => itemObserver.observe(el));
-      } else {
-        itemsToAnimate.forEach((el) => {
-          el.classList.add("video-visible");
-          if(el.classList.contains('career-card')) el.classList.add("visible-block");
-        });
-      }
-
-      // 4. View Toggle Logic
-      function setupToggle(btnSelector, wrapperSelector, type) {
-        const btn = document.querySelector(btnSelector);
-        const wrapper = document.querySelector(wrapperSelector);
-        
-        if (!btn || !wrapper) return;
-
-        let isGrid = false;
-        btn.addEventListener("click", () => {
-          isGrid = !isGrid;
-          
-          if (isGrid) {
-            wrapper.classList.remove("to-slider");
-            wrapper.classList.add("view-grid");
-            btn.textContent = "슬라이더 보기";
-          } else {
-            wrapper.classList.remove("view-grid");
-            wrapper.classList.add("to-slider");
-            btn.textContent = "전체 보기";
-            
-            // 애니메이션 끝나면 클래스 정리
-            setTimeout(() => {
-              wrapper.classList.remove("to-slider");
-            }, 600);
-          }
-        });
-      }
-
-      setupToggle(".longform-view-toggle", ".longform-slider-wrapper", "longform");
-      setupToggle(".shorts-view-toggle", ".shorts-slider-wrapper", "shorts");
-
-      // 5. Top Bar Navigation (Smooth Scroll)
-      const topToggleLink = document.querySelector(".top-right a");
-      const longformSec = document.getElementById("longform");
-      const shortsSec = document.getElementById("shorts");
-      const topBar = document.querySelector(".top-bar");
-      
-      let toggleState = 0; // 0: go longform, 1: go shorts
-
-      if (topToggleLink && longformSec && shortsSec) {
-        topToggleLink.addEventListener("click", (e) => {
-          e.preventDefault();
-          const target = toggleState === 0 ? longformSec : shortsSec;
-          
-          // 오프셋 계산 (헤더 높이 + 여유분)
-          const headerHeight = topBar ? topBar.offsetHeight : 60;
-          const targetPos = target.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
-
-          window.scrollTo({
-            top: targetPos,
-            behavior: "smooth"
-          });
-
-          toggleState = (toggleState + 1) % 2;
-        });
-      }
-      
-      // 최상단으로 가면 토글 순서 리셋
-      window.addEventListener("scroll", () => {
-        if (window.scrollY < 200) {
-          toggleState = 0;
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
         }
-      }, { passive: true });
-    });
-  </script>
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  });
+</script>
+
 </body>
 </html>
