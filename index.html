@@ -3,11 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light" />
 <title>Lostand | Video Editor Portfolio</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+/* 다크 모드 강제 반전 방지 */
+:root {
+  color-scheme: light;
+}
+
 /* Background - iOS Mesh Gradient Style */
 body {
   font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -89,7 +95,7 @@ h2 { font-size: 36px; font-weight: 700; margin-bottom: 16px; text-align: center;
 .metric-number { font-size: 40px; font-weight: 700; color: #005C6A; margin-bottom: 8px; letter-spacing: -1px; }
 .metric-label { font-size: 16px; color: #2E5358; font-weight: 500; }
 
-/* PHILOSOPHY (NEWLY REPLACED) */
+/* PHILOSOPHY */
 .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .phil-card { padding: 50px 30px; text-align: center; display: flex; flex-direction: column; align-items: center; }
 .phil-icon { font-size: 44px; margin-bottom: 20px; filter: drop-shadow(0 4px 10px rgba(0, 92, 106, 0.1)); }
@@ -131,6 +137,9 @@ iframe { width: 100%; height: 100%; border: 0; display: block; }
 
 /* MOBILE */
 @media(max-width:768px){
+  /* iOS 배경 렌더링 버그(까맣게 변하는 현상) 해결을 위해 고정 해제 */
+  body { background-attachment: scroll; }
+  
   section { padding: 60px 0; }
   .hero h1 { font-size: 46px; }
   .metrics-grid, .video-grid, .style-grid, .philosophy-grid { grid-template-columns: 1fr; gap: 20px; }
@@ -250,7 +259,7 @@ iframe { width: 100%; height: 100%; border: 0; display: block; }
     <h2>경력</h2>
     <div class="info-card glass hover-lift">
       <p class="exp-text">
-        3만 빙밍 유튜브 편집자 (2025.01.17 ~2026.04.20)<br><br>
+        3만 빙밍 유튜브 편집자 (2025.01.17 ~)<br><br>
         43만 왈도쿤 유튜브 편집자 (2026.01.20 ~)
       </p>
     </div>
